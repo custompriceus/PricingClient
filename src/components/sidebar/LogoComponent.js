@@ -30,10 +30,10 @@ function LogoComponent() {
 
     return (
         <Row onClick={() => {
-            onClick(SLUGS.overview)
+            onClick(SLUGS.shirtpricing)
         }} className={classes.container} horizontal='center' vertical='center'>
             <IconLogo />
-            <span className={classes.title}>League Lorem</span>
+            <span className={classes.title}>Shirt Pricing</span>
         </Row>
     );
 }

@@ -1,8 +1,8 @@
 {
-    "name": "league-lorem",
+    "name": "shirt-pricing",
     "version": "0.1.0",
     "private": true,
-    "homepage": "https://llorentegerman.github.io/react-admin-dashboard",
+    "homepage": "https://www.facebook.com/PinpointPromotions/",
     "dependencies": {
         "@react-oauth/google": "^0.4.0",
         "axios": "^1.1.3",
