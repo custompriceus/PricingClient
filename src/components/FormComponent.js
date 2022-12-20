@@ -2,6 +2,8 @@ import React from 'react';
 import { Column, Row } from 'simple-flexbox';
 import { useForm } from 'react-hook-form';
 import AwesomeButtonComponent from '../components/AwesomeButtonComponent';
+import { AwesomeButton } from 'react-awesome-button';
+import 'react-awesome-button/dist/styles.css';
 
 
 function FormComponent(props) {
