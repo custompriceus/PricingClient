@@ -128,13 +128,7 @@ function EmbroideryPricingComponent() {
             case (shirtQuantity >= 100 && shirtQuantity <= 248):
                 return '100-248';
             case (shirtQuantity >= 249 && shirtQuantity <= 499):
-                return '249-499';
-            case (shirtQuantity >= 500 && shirtQuantity <= 999):
-                return '500-999';
-            case (shirtQuantity >= 1000 && shirtQuantity <= 1999):
-                return '1000-1999';
-            case (shirtQuantity >= 2000):
-                return '2000+';
+                return '249+';
             default:
                 console.log(`Quantity Not Found`);
         }
@@ -170,10 +164,6 @@ function EmbroideryPricingComponent() {
     }
 
     const getEmbroideryPrintCost = (embroideryShirtQuantityBucket, stitchQuantityBucket) => {
-        console.log('get print cost');
-        console.log(embroideryShirtQuantityBucket);
-        console.log(stitchQuantityBucket);
-        console.log(embroideryDbPrices);
         return parseFloat(embroideryDbPrices.find(obj =>
             obj.quantity == embroideryShirtQuantityBucket && obj.stitches === stitchQuantityBucket
         ).price)

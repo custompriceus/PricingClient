@@ -211,7 +211,7 @@ function PriceListComponent() {
                                     return (
                                         <td style={{ textAlign: 'center', justifyContent: 'center' }} >
                                             <Row style={{ borderLeft: "1px solid rgb(0, 0, 0)" }}>
-                                                <Column flex={.5} onClick={() => { console.log('item 2, ', itemTwo) }}>
+                                                <Column flex={.5}>
                                                     {'$' + (Math.round(itemTwo.price * 100) / 100).toFixed(2)}
                                                 </Column>
                                                 <Column horizontal='center' vertical='center' flex={.5}>
