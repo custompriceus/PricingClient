@@ -56,13 +56,16 @@ function ShirtPricingComponent() {
     const { actions, state } = useContext(StoreContext);
     const [pricing, setPricing] = useState();
     const [shirtCost, setShirtCost] = useState();
+    const [jerseyNumberCost, setJerseyNumberCost] = useState();
     const [markUp, setMarkUp] = useState();
     const [printSideOneColors, setPrintSideOneColors] = useState();
     const [printSideTwoColors, setPrintSideTwoColors] = useState();
+    const [jerseyNumberSides, setJerseyNumberSides] = useState();
     const [shirtQuantity, setShirtQuantity] = useState();
     const [netCost, setNetCost] = useState();
     const [printSideOneCost, setPrintSideOneCost] = useState();
     const [printSideTwoCost, setPrintSideTwoCost] = useState();
+    const [additionalItemsCost, setAdditionalItemsCost] = useState();
     const [profit, setProfit] = useState();
     const [totalCost, setTotalCost] = useState();
     const [totalProfit, setTotalProfit] = useState();
@@ -71,6 +74,27 @@ function ShirtPricingComponent() {
     const [shirtQuantityBucket, setShirtQuantityBucket] = useState();
 
     const [dbPrices, setdbPrices] = useState();
+
+    const additionalItems = [
+        { name: 'Nylon', checked: false },
+        { name: 'Poly', checked: false },
+        { name: 'Mesh', checked: false },
+        { name: 'Jersey', checked: false },
+        { name: 'Legs', checked: false },
+        { name: 'Sweats', checked: false },
+        { name: 'Sleeves', checked: false }
+    ];
+    const [selectedAdditionalItems, setSelectedAdditionalItems] = useState(additionalItems);
+    const [finalSelectedItems, setFinalSelectedItems] = useState();
+    const [finalSelectedItemsString, setFinalSelectedItemsString] = useState();
+
+    const handleAdditionalItems = (item) => {
+        const objIndex = selectedAdditionalItems.findIndex((obj => obj.name == item.name));
+        let clone = selectedAdditionalItems.slice()
+        clone[objIndex].checked = !item.checked
+
+        setSelectedAdditionalItems(clone)
+    };
 
     const {
         register,
@@ -123,6 +147,19 @@ function ShirtPricingComponent() {
         }
     }
 
+    const getAdditionalItemsPrice = (shirtQuantity) => {
+        switch (true) {
+            case (shirtQuantity >= 12 && shirtQuantity <= 36):
+                return 0.50;
+            case (shirtQuantity >= 37 && shirtQuantity <= 72):
+                return 0.35;
+            case (shirtQuantity > 72):
+                return 0.25;
+            default:
+                console.log(`Quantity Not Found`);
+        }
+    }
+
     const getPrintCost = (shirtQuantityBucket, numberOfColors) => {
         return parseFloat(dbPrices.find(obj =>
             obj.quantity == shirtQuantityBucket && obj.colors === parseInt(numberOfColors)
@@ -140,6 +177,7 @@ function ShirtPricingComponent() {
                         const markUp = parseFloat(data.markUp);
                         const printSideOneColors = data.printSideOneColors;
                         const printSideTwoColors = data.printSideTwoColors;
+                        const jerseyNumberSides = parseInt(data.jerseyNumberSides);
 
                         setPricing(data);
                         setShirtQuantity(parseInt(shirtQuantity));
@@ -147,6 +185,7 @@ function ShirtPricingComponent() {
                         setMarkUp(markUp);
                         setPrintSideOneColors(printSideOneColors);
                         setPrintSideTwoColors(printSideTwoColors);
+                        setJerseyNumberSides(jerseyNumberSides);
 
                         const shirtQuantityBucket = getShirtQuantityBucket(shirtQuantity);
                         setShirtQuantityBucket(shirtQuantityBucket);
@@ -157,7 +196,36 @@ function ShirtPricingComponent() {
                         const printSideTwoCost = printSideTwoColors ? getPrintCost(shirtQuantityBucket, printSideTwoColors) : 0;
                         setPrintSideTwoCost(printSideTwoCost);
 
-                        const netCost = (printSideOneCost + printSideTwoCost + shirtCost)
+                        const jerseyNumberCost = jerseyNumberSides ? jerseyNumberSides * 2 : 0;
+                        setJerseyNumberCost(jerseyNumberCost);
+
+                        let finalSelectedItems = [];
+                        let finalSelectedItemsString = ''
+                        selectedAdditionalItems.map(additionalItem => {
+                            if (additionalItem.checked) {
+                                finalSelectedItems.push(additionalItem.name);
+                                if (finalSelectedItemsString === '') {
+                                    finalSelectedItemsString += additionalItem.name
+                                }
+                                else {
+                                    finalSelectedItemsString += ', ' + additionalItem.name
+                                }
+                            }
+                        })
+
+                        setFinalSelectedItems(finalSelectedItems);
+                        setFinalSelectedItemsString(finalSelectedItemsString);
+
+
+                        let additionalItemsCost = 0.00;
+                        if (finalSelectedItems && finalSelectedItems.map) {
+                            const additionalItemsPricePer = getAdditionalItemsPrice(shirtQuantity);
+                            additionalItemsCost = finalSelectedItems.length * additionalItemsPricePer;
+                        }
+                        setAdditionalItemsCost(additionalItemsCost)
+
+
+                        const netCost = (printSideOneCost + printSideTwoCost + shirtCost + jerseyNumberCost + additionalItemsCost);
                         setNetCost(netCost);
 
                         const profit = (netCost * (markUp / 100));
@@ -170,6 +238,7 @@ function ShirtPricingComponent() {
                         setTotalProfit((profit * shirtQuantity));
 
                         reset();
+                        setSelectedAdditionalItems(additionalItems)
                     })}
                 >
                     <Row style={{ margin: '10px' }}>
@@ -198,11 +267,37 @@ function ShirtPricingComponent() {
                     </Row>
                     <Row style={{ margin: '10px' }}>
                         <Column flex={.5} style={{ marginRight: '10px' }}>
+                            Jersey Number Sides
+                        </Column>
+                        <Column flex={.5} style={{ marginRight: '10px' }}>
+                            <input style={{}} {...register("jerseyNumberSides")} />
+                        </Column>
+                    </Row>
+                    <Row style={{ margin: '10px' }}>
+                        <Column flex={.5} style={{ marginRight: '10px' }}>
                             Shirt Cost (1.50 for $1.50, 2.00 for $2.00, etc.)
                         </Column>
                         <Column flex={.5} style={{ marginRight: '10px' }}>
                             <input style={{}} {...register("shirtCost")} />
                         </Column>
+                    </Row>
+                    <Row style={{ margin: '10px' }}>
+                        {selectedAdditionalItems.map(item => {
+                            return (
+                                <Column flex={1 / selectedAdditionalItems.length}>
+                                    <div>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                checked={item.checked}
+                                                onClick={() => handleAdditionalItems(item)}
+                                            />
+                                            {item.name}
+                                        </label>
+                                    </div>
+                                </Column>
+                            )
+                        })}
                     </Row>
                     <Row style={{ margin: '10px' }}>
                         <Column flex={.5} style={{ marginRight: '10px' }}>
@@ -244,6 +339,14 @@ function ShirtPricingComponent() {
                 </Row>
                 <Row style={{ margin: '10px' }}>
                     <Column flex={0.5}>
+                        Jersey Number Sides:
+                    </Column>
+                    <Column flex={0.5}>
+                        {jerseyNumberSides ? jerseyNumberSides : 0}
+                    </Column>
+                </Row>
+                <Row style={{ margin: '10px' }}>
+                    <Column flex={0.5}>
                         Print Side One Cost:
                     </Column>
                     <Column flex={0.5}>
@@ -260,12 +363,32 @@ function ShirtPricingComponent() {
                 </Row>
                 <Row style={{ margin: '10px' }}>
                     <Column flex={0.5}>
+                        Jersey Number Cost:
+                    </Column>
+                    <Column flex={0.5}>
+                        ${jerseyNumberCost ? (Math.round(jerseyNumberCost * 100) / 100).toFixed(2) : 0}
+                    </Column>
+                </Row>
+                <Row style={{ margin: '10px' }}>
+                    <Column flex={0.5}>
                         Shirt Cost:
                     </Column>
                     <Column flex={0.5}>
                         ${shirtCost ? (Math.round(shirtCost * 100) / 100).toFixed(2) : 0}
                     </Column>
                 </Row>
+                <Row style={{ margin: '10px' }}>
+                    <Column flex={0.5}>
+                        Additional Items Cost:
+                    </Column>
+                    <Column flex={0.5}>
+                        ${additionalItemsCost ? (Math.round(additionalItemsCost * 100) / 100).toFixed(2) : 0}
+                    </Column>
+                </Row>
+                {finalSelectedItems && finalSelectedItems.map ?
+                    <Row style={{ margin: '10px' }}>
+                        <span style={{ fontSize: '14px' }}>{finalSelectedItemsString}</span>
+                    </Row> : null}
                 <Row style={{ margin: '10px' }}>
                     <Column flex={0.5}>
                         Net Cost:
