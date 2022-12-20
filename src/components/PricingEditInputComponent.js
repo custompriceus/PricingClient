@@ -12,8 +12,7 @@ function PricingEditInputComponent(props) {
 
     return (
         <Column horizontal='center' vertical='center' flex={.5}>
-            <Column
-                horizontal='center' vertical='center' flex={.5}>
+            <Column horizontal='center' vertical='center' flex={.5}>
                 <input style={{ width: '100%' }} onBlur={handleBlur} />
             </Column>
         </Column>

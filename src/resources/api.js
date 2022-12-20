@@ -142,6 +142,32 @@ export function login(token, type, sub, email) {
     })
 }
 
+export function signup() {
+    return new Promise((resolve, reject) => {
+        let data =
+        {
+            "email": 'tester1',
+            "password": 'abc123',
+        }
+        console.log('at signup api');
+        axios({
+            url: url + "api/auth/signup",
+            method: "POST",
+            data: data,
+        })
+            .then(res => {
+                console.log('resolve res');
+                console.log(res);
+                resolve(res)
+            })
+            .catch(err => {
+                // console.log('error');
+                // console.log(err)
+                reject(err)
+            })
+    })
+}
+
 export function getGoogleProfileFromBearerToken(token) {
     return new Promise((resolve, reject) => {
         axios({

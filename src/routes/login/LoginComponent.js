@@ -4,6 +4,7 @@ import React, { useContext } from 'react';
 import { Column, Row } from 'simple-flexbox';
 import useWindowSize from '../../hooks/useWindowSize';
 import LoadingComponent from '../../components/loading';
+import { ToastContainer, toast } from 'react-toastify';
 import * as apiServices from '../../resources/api';
 
 function LoginComponent() {
@@ -48,6 +49,31 @@ function LoginComponent() {
         },
     });
 
+    const tester = async () => {
+        try {
+            await apiServices.signup()
+                .then(res => {
+                    // actions.generalActions.setUser(res.data);
+                    // actions.generalActions.login()
+                })
+        }
+        catch (error) {
+            console.log('at error');
+            console.log(error);
+            displayToast(error.response.data.message, 'error')
+        }
+    }
+
+    const displayToast = (message, type) => {
+        toast(message, {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+            type: type,
+            theme: "light",
+        });
+    }
+
     if (state.generalStates.isBusy) {
         return <LoadingComponent loading />
     }
@@ -63,6 +89,16 @@ function LoginComponent() {
                 googleLogin()
             }}><img src={require('../../assets/icons/google_signin_buttons/web/2x/btn_google_signin_dark_pressed_web@2x.png')} />
             </Row>
+            {/* <AwesomeButton type="secondary" size="large"
+                onPress={() => {
+                    displayToast('test', 'success')
+                    // event.preventDefault()
+                    // // window.open(registrant.deck_url, "_blank")
+                    // tester()
+                }}
+            >
+                Test
+            </AwesomeButton> */}
         </Column>
     );
 }

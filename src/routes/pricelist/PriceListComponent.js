@@ -5,12 +5,10 @@ import LoadingComponent from '../../components/loading';
 import * as apiServices from '../../resources/api';
 import { FaEdit } from "react-icons/fa";
 import { Column, Row } from 'simple-flexbox';
-import { ToastContainer, toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import 'react-awesome-button/dist/styles.css';
 import PricingEditInputComponent from 'components/PricingEditInputComponent';
-import { AwesomeButton } from 'react-awesome-button';
-import 'react-awesome-button/dist/styles.css';
+import AwesomeButtonComponent from 'components/AwesomeButtonComponent';
 
 const useStyles = createUseStyles({
 
@@ -89,17 +87,6 @@ function PriceListComponent() {
         return <LoadingComponent loading />
     }
 
-    const displayToast = (message, type) => {
-        toast(message, {
-            position: "top-right",
-            autoClose: 2000,
-            hideProgressBar: true,
-            type: type,
-            theme: "light",
-        });
-    }
-
-
     const handleNewPricing = (props, newPrice) => {
         if (props && props.type && props.type === 'lightAndDarkPricing') {
             setNewLightDarkPricing([...newLightDarkPricing,
@@ -127,11 +114,14 @@ function PriceListComponent() {
     return (
         prices ? (
             <div>
-                <ToastContainer />
                 <table style={{ width: '100%' }}>
-                    <caption>Light And Dark Shirt Pricing <FaEdit size='16px' onClick={() => {
-                        setDisplayEditLightDarkPricing(!displayEditLightDarkPricing)
-                    }} /></caption>
+                    <caption>
+                        Light And Dark Shirt Pricing
+                        <FaEdit size='16px' onClick={() => {
+                            setDisplayEditLightDarkPricing(!displayEditLightDarkPricing)
+                        }}
+                        />
+                    </caption>
                     <tr>
                         <td></td>
                         {prices.shirtColorQuantities.map(item => {
@@ -173,7 +163,10 @@ function PriceListComponent() {
                 </table >
                 {displayEditLightDarkPricing ?
                     <Row vertical='center' horizontal='center'>
-                        <AwesomeButton size="large" type="secondary"
+                        <AwesomeButtonComponent
+                            text={'Submit New Pricing'}
+                            size={'large'}
+                            type='secondary'
                             onPress={async () => {
                                 const response = await apiServices.postNewLightDarkPrices(state.generalStates.user.accessToken, newLightDarkPricing);
                                 if (response) {
@@ -182,17 +175,18 @@ function PriceListComponent() {
                                     fetchData().catch(console.error);
                                 }
                             }}
-                        >
-                            Submit New Pricing
-                        </AwesomeButton>
+                        />
                     </Row>
                     : null}
                 <br />
                 <br />
                 <table style={{ width: '100%' }}>
-                    <caption>Embroidery Pricing <FaEdit size='16px' onClick={() => {
-                        setDisplayEditEmbroideryPricing(!displayEditEmbroideryPricing)
-                    }} /></caption>
+                    <caption>
+                        Embroidery Pricing
+                        <FaEdit size='16px' onClick={() => {
+                            setDisplayEditEmbroideryPricing(!displayEditEmbroideryPricing)
+                        }} />
+                    </caption>
                     <tr >
                         <td ></td>
                         {prices.embroideryStitchBuckets.map(item => {
@@ -236,7 +230,10 @@ function PriceListComponent() {
                 </table >
                 {displayEditEmbroideryPricing ?
                     <Row vertical='center' horizontal='center'>
-                        <AwesomeButton size="large" type="secondary"
+                        <AwesomeButtonComponent
+                            text={'Submit New Pricing'}
+                            size={'large'}
+                            type='secondary'
                             onPress={async () => {
                                 const response = await apiServices.postNewEmbroideryPrices(state.generalStates.user.accessToken, newEmbroideryPricing);
                                 if (response) {
@@ -245,10 +242,9 @@ function PriceListComponent() {
                                     fetchData().catch(console.error);
                                 }
                             }}
-                        >
-                            Submit New Pricing
-                        </AwesomeButton>
-                    </Row> : null}
+                        />
+                    </Row>
+                    : null}
             </div >
         )
             : null
