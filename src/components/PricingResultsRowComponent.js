@@ -3,7 +3,7 @@ import { Column, Row } from 'simple-flexbox';
 
 function PricingResultsRowComponent(props) {
     return (
-        <Row style={{ margin: '10px' }}>
+        <Row style={props.style ? { margin: '10px', ...props.style } : { margin: '10px' }}>
             <Column flex={0.5}>
                 {props.text}:
             </Column>

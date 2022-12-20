@@ -206,27 +206,28 @@ function ShirtPricingComponent() {
                     <PricingResultsRowComponent text={'Quantity'} value={shirtQuantity} />
                     <PricingResultsRowComponent text={'Print Side One Colors'} value={printSideOneColors} />
                     <PricingResultsRowComponent text={'Print Side Two Colors'} value={printSideTwoColors} />
-                    <PricingResultsRowComponent text={'Jersey Number Sides'} value={jerseyNumberSides} />
+                    <PricingResultsRowComponent text={'Jersey Number Sides'} value={jerseyNumberSides} style={{ borderBottom: '1px dotted' }} />
                     <PricingResultsRowComponent text={'Print Side One Cost'} value={'$' + formatNumber(printSideOneCost)} />
                     <PricingResultsRowComponent text={'Print Side Two Cost'} value={'$' + formatNumber(printSideTwoCost)} />
                     <PricingResultsRowComponent text={'Jersey Number Cost'} value={'$' + formatNumber(jerseyNumberCost)} />
                     <PricingResultsRowComponent text={'Shirt Cost'} value={'$' + formatNumber(shirtCost)} />
-                    <PricingResultsRowComponent text={'Additional Items Cost'} value={'$' + formatNumber(additionalItemsCost)} />
+                    <PricingResultsRowComponent text={'Additional Items Cost'} value={'$' + formatNumber(additionalItemsCost)}
+                        style={finalSelectedItems && finalSelectedItems.map ? null : { borderBottom: '1px dotted' }} />
 
                     {finalSelectedItems && finalSelectedItems.map ?
-                        <Row style={{ margin: '10px' }}>
+                        <Row style={{ margin: '10px', flex: 1, borderBottom: '1px dotted' }}>
                             <span style={{ fontSize: '14px' }}>{finalSelectedItemsString}</span>
                         </Row> : null}
 
                     <PricingResultsRowComponent text={'Net Cost'} value={'$' + formatNumber(netCost)} />
                     <PricingResultsRowComponent text={'Mark Up'} value={formatNumber(markUp) + '%'} />
-                    <PricingResultsRowComponent text={'Profit'} value={'$' + formatNumber(profit)} />
-                    <PricingResultsRowComponent text={'Retail Price'} value={'$' + formatNumber(retailPrice)} />
+                    <PricingResultsRowComponent text={'Profit'} value={'$' + formatNumber(profit)} style={{ borderBottom: '1px dotted' }} />
+                    <PricingResultsRowComponent text={'Retail Price'} value={'$' + formatNumber(retailPrice)} style={{ borderBottom: '1px dotted' }} />
                     <PricingResultsRowComponent text={'Total Cost'} value={'$' + formatNumber(totalCost).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} />
                     <PricingResultsRowComponent text={'Total Profit'} value={'$' + formatNumber(totalProfit).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} />
                 </Column>
-            </Row>
-        </Column>
+            </Row >
+        </Column >
     );
 }
 

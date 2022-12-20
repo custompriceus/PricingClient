@@ -128,16 +128,16 @@ function EmbroideryPricingComponent() {
                     <PricingResultsRowComponent text={'Location 1 Stitches'} value={location1Stitches} />
                     <PricingResultsRowComponent text={'Location 2 Stitches'} value={location2Stitches} />
                     <PricingResultsRowComponent text={'Location 3 Stitches'} value={location3Stitches} />
-                    <PricingResultsRowComponent text={'Location 4 Stitches'} value={location4Stitches} />
+                    <PricingResultsRowComponent text={'Location 4 Stitches'} value={location4Stitches} style={{ borderBottom: '1px dotted' }} />
                     <PricingResultsRowComponent text={'Location 1 Cost'} value={'$' + formatNumber(location1PrintCost)} />
                     <PricingResultsRowComponent text={'Location 2 Cost'} value={'$' + formatNumber(location2PrintCost)} />
                     <PricingResultsRowComponent text={'Location 3 Cost'} value={'$' + formatNumber(location3PrintCost)} />
                     <PricingResultsRowComponent text={'Location 4 Cost'} value={'$' + formatNumber(location4PrintCost)} />
-                    <PricingResultsRowComponent text={'Shirt Cost'} value={'$' + formatNumber(shirtCost)} />
+                    <PricingResultsRowComponent text={'Shirt Cost'} value={'$' + formatNumber(shirtCost)} style={{ borderBottom: '1px dotted' }} />
                     <PricingResultsRowComponent text={'Net Cost'} value={'$' + formatNumber(netCost)} />
                     <PricingResultsRowComponent text={'Mark Up'} value={formatNumber(markUp) + '%'} />
-                    <PricingResultsRowComponent text={'Profit'} value={'$' + formatNumber(profit)} />
-                    <PricingResultsRowComponent text={'Retail Price'} value={'$' + formatNumber(retailPrice)} />
+                    <PricingResultsRowComponent text={'Profit'} value={'$' + formatNumber(profit)} style={{ borderBottom: '1px dotted' }} />
+                    <PricingResultsRowComponent text={'Retail Price'} value={'$' + formatNumber(retailPrice)} style={{ borderBottom: '1px dotted' }} />
                     <PricingResultsRowComponent text={'Total Cost'} value={'$' + formatNumber(totalCost).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} />
                     <PricingResultsRowComponent text={'Total Profit'} value={'$' + formatNumber(totalProfit).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} />
                 </Column>
