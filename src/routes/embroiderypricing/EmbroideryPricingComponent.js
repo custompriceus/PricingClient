@@ -127,7 +127,7 @@ function EmbroideryPricingComponent() {
                 return '48-99';
             case (shirtQuantity >= 100 && shirtQuantity <= 248):
                 return '100-248';
-            case (shirtQuantity >= 249 && shirtQuantity <= 499):
+            case (shirtQuantity >= 249):
                 return '249+';
             default:
                 console.log(`Quantity Not Found`);
@@ -213,6 +213,7 @@ function EmbroideryPricingComponent() {
 
                         const netCost = (location1PrintCost + location2PrintCost + location3PrintCost + location4PrintCost + shirtCost)
                         setNetCost(netCost);
+                        console.log('net cost, ', netCost)
 
                         const profit = (netCost * (markUp / 100))
                         setProfit(profit);
@@ -221,6 +222,7 @@ function EmbroideryPricingComponent() {
                         setRetailPrice(retailPrice);
 
                         setTotalCost((netCost * shirtQuantity));
+                        console.log('total cost', netCost * shirtQuantity);
                         setTotalProfit((profit * shirtQuantity));
 
                         reset2();
