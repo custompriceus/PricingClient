@@ -111,7 +111,19 @@ function LoginComponent() {
             alignItems: "center",
             minHeight: height
         }}>
-            {showSignInWithGoogle ? <Row style={{ cursor: 'pointer' }} onClick={() => {
+            <Row center='vertical' horizontal='vertical' style={{ marginBottom: '10px' }}>
+                {showSignInWithGoogle ?
+                    null :
+                    showSignInWithEmail ?
+                        <Row style={{ fontSize: '30px' }}>
+                            Sign In With Email
+                        </Row>
+                        : showSignUpWithEmail ?
+                            <Row style={{ fontSize: '30px' }}>
+                                Sign Up With Email
+                            </Row> : null}
+            </Row>
+            {showSignInWithGoogle ? <Row style={{ cursor: 'pointer', marginTop: '30px' }} onClick={() => {
                 googleLogin()
             }}><img src={require('../../assets/icons/google_signin_buttons/web/2x/btn_google_signin_dark_pressed_web@2x.png')} />
             </Row> : null}

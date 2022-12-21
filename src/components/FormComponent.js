@@ -57,9 +57,11 @@ function FormComponent(props) {
                     </Row>
                     : null
             }
-            <AwesomeButtonComponent
-                text={props.text ? props.text : 'Get Price Quote'}
-            />
+            <Row vertical='center' horizontal='center'>
+                <AwesomeButtonComponent
+                    text={props.text ? props.text : 'Get Price Quote'}
+                />
+            </Row>
         </form >
     );
 }
