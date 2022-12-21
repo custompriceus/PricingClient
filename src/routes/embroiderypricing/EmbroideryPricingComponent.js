@@ -92,7 +92,6 @@ function EmbroideryPricingComponent() {
 
         const netCost = (location1PrintCost + location2PrintCost + location3PrintCost + location4PrintCost + shirtCost)
         setNetCost(netCost);
-        console.log('net cost, ', netCost)
 
         const profit = (netCost * (markUp / 100))
         setProfit(profit);

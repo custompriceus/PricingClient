@@ -23,40 +23,42 @@ function FormComponent(props) {
         >
             {props.items.map(item => {
                 return (
-                    <Row style={{ margin: '10px' }}>
+                    <Row style={{ margin: '10px' }} key={item.text ? item.text : null}>
                         <Column flex={.5} style={{ marginRight: '10px' }}>
                             {item.text}
                         </Column>
                         <Column flex={.5} style={{ marginRight: '10px' }}>
-                            <input style={{}} {...register(item.register)} />
+                            <input type={item.type ? item.type : null} style={{}} {...register(item.register)} />
                         </Column>
                     </Row>
                 )
             })}
-            {props.selectedAdditionalItems ?
-                <Row horizontal="spaced" style={{ margin: '10px' }} wrap>
-                    {props.selectedAdditionalItems.map(item => {
-                        return (
-                            <Column
-                                style={{ minWidth: 200 }}
-                                horizontal="left"
-                            >
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        checked={item.checked}
-                                        onClick={() => props.handleAdditionalItems(item)}
-                                    />
-                                    {item.name}
-                                </label>
-                            </Column>
-                        )
-                    })}
-                </Row>
-                : null
+            {
+                props.selectedAdditionalItems ?
+                    <Row horizontal="spaced" style={{ margin: '10px' }} wrap>
+                        {props.selectedAdditionalItems.map(item => {
+                            return (
+                                <Column
+                                    style={{ minWidth: 200 }}
+                                    horizontal="left"
+                                    key={item.name ? item.name : null}
+                                >
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            checked={item.checked}
+                                            onClick={() => props.handleAdditionalItems(item)}
+                                        />
+                                        {item.name}
+                                    </label>
+                                </Column>
+                            )
+                        })}
+                    </Row>
+                    : null
             }
             <AwesomeButtonComponent
-                text={'Get Price Quote'}
+                text={props.text ? props.text : 'Get Price Quote'}
             />
         </form >
     );

@@ -48,17 +48,12 @@ export function postNewEmbroideryPrices(accessToken, newEmbroideryPrices) {
 }
 
 export function getShirtPrices() {
-    console.log('get shirt prices at api');
-    console.log(url)
-
     return new Promise((resolve, reject) => {
         axios({
             url: url + "shirtprices",
             method: "GET",
         })
             .then(res => {
-                console.log('resolve res');
-                console.log(res);
                 resolve(res)
             })
             .catch(err => {
@@ -70,17 +65,12 @@ export function getShirtPrices() {
 }
 
 export function getEmbroideryShirtPrices() {
-    console.log('get embroidery shirt prices at api');
-    console.log(url)
-
     return new Promise((resolve, reject) => {
         axios({
             url: url + "embroideryshirtprices",
             method: "GET",
         })
             .then(res => {
-                console.log('resolve res');
-                console.log(res);
                 resolve(res)
             })
             .catch(err => {
@@ -98,8 +88,6 @@ export function getPricingList() {
             method: "GET",
         })
             .then(res => {
-                console.log('resolve res');
-                console.log(res);
                 resolve(res)
             })
             .catch(err => {
@@ -123,15 +111,12 @@ export function login(token, type, sub, email) {
         if (email) {
             data.email = email
         }
-        console.log('at login api');
         axios({
             url: url + "api/auth/login",
             method: "POST",
             data: data,
         })
             .then(res => {
-                console.log('resolve res');
-                console.log(res);
                 resolve(res)
             })
             .catch(err => {
@@ -142,22 +127,19 @@ export function login(token, type, sub, email) {
     })
 }
 
-export function signup() {
+export function loginWithEmail(email, password) {
     return new Promise((resolve, reject) => {
         let data =
         {
-            "email": 'tester1',
-            "password": 'abc123',
+            "email": email,
+            "password": password,
         }
-        console.log('at signup api');
         axios({
-            url: url + "api/auth/signup",
+            url: url + "api/auth/loginwithemail",
             method: "POST",
             data: data,
         })
             .then(res => {
-                console.log('resolve res');
-                console.log(res);
                 resolve(res)
             })
             .catch(err => {
@@ -183,6 +165,29 @@ export function getGoogleProfileFromBearerToken(token) {
             .catch(err => {
                 console.log('error');
                 console.log(err)
+                reject(err)
+            })
+    })
+}
+
+export function signUpWithEmail(email, password) {
+    return new Promise((resolve, reject) => {
+        let data =
+        {
+            "email": email,
+            "password": password,
+        }
+        axios({
+            url: url + "api/auth/signupwithemail",
+            method: "POST",
+            data: data,
+        })
+            .then(res => {
+                resolve(res)
+            })
+            .catch(err => {
+                // console.log('error');
+                // console.log(err)
                 reject(err)
             })
     })
