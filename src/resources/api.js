@@ -127,7 +127,7 @@ export function login(token, type, sub, email) {
     })
 }
 
-export function loginWithEmail(email, password) {
+export function signInWithEmail(email, password) {
     return new Promise((resolve, reject) => {
         let data =
         {

@@ -48,8 +48,8 @@ function LoginComponent() {
         },
     });
 
-    const loginWithEmail = async (data) => {
-        await apiServices.loginWithEmail(data.email, data.password)
+    const signInWithEmail = async (data) => {
+        await apiServices.signInWithEmail(data.email, data.password)
             .then(res => {
                 console.log(res);
                 actions.generalActions.setUser(res.data);
@@ -90,6 +90,16 @@ function LoginComponent() {
         }
     }
 
+    const displayToggleOptionRow = (toggleOption, text) => {
+        return (
+            <Column
+                onClick={() => { handleDisplayToggle(toggleOption) }}
+                style={{ marginLeft: '10px', marginRight: '10px', marginTop: '20px', padding: '10px', border: '1px solid', borderRadius: '3px', cursor: "pointer" }}>
+                {text}
+            </Column>
+        )
+    }
+
     if (state.generalStates.isBusy) {
         return <LoadingComponent loading />
     }
@@ -105,9 +115,6 @@ function LoginComponent() {
                 googleLogin()
             }}><img src={require('../../assets/icons/google_signin_buttons/web/2x/btn_google_signin_dark_pressed_web@2x.png')} />
             </Row> : null}
-            {/* <Row center='vertical' horizontal='vertical'>
-                OR
-            </Row> */}
             {showSignUpWithEmail ? <FormComponent
                 handleSubmit={signUpWithEmail}
                 items={
@@ -120,55 +127,33 @@ function LoginComponent() {
                 text={'Sign Up'}
             /> : null}
             {showSignInWithEmail ?
-                <Row>
-                    <FormComponent
-                        handleSubmit={loginWithEmail}
-                        items={
-                            [
-                                { text: 'Email', register: 'email' },
-                                { text: 'Password', register: 'password', type: 'password' },
-                            ]
-                        }
-                        text={'Sign In'}
-                    />
-                </Row>
+                <FormComponent
+                    handleSubmit={signInWithEmail}
+                    items={
+                        [
+                            { text: 'Email', register: 'email' },
+                            { text: 'Password', register: 'password', type: 'password' },
+                        ]
+                    }
+                    text={'Sign In'}
+                />
                 : null}
             <Row center='vertical' horizontal='vertical'>
-                {showSignInWithGoogle ? <Row>
-                    <Column
-                        onClick={() => { handleDisplayToggle('signUpWithEmail') }}
-                        style={{ marginLeft: '10px', marginRight: '10px', marginTop: '20px', padding: '10px', border: '1px solid', borderRadius: '3px', cursor: "pointer" }}>
-                        Sign Up With Email
-                    </Column>
-                    <Column
-                        onClick={() => { handleDisplayToggle('signInWithEmail') }}
-                        style={{ marginLeft: '10px', marginRight: '10px', marginTop: '20px', padding: '10px', border: '1px solid', borderRadius: '3px', cursor: "pointer" }}>
-                        Sign In With Email
-                    </Column> </Row> :
+                {showSignInWithGoogle ?
+                    <Row>
+                        {displayToggleOptionRow('signUpWithEmail', 'Sign up with Email')}
+                        {displayToggleOptionRow('signInWithEmail', 'Sign in with Email')}
+                    </Row> :
                     showSignInWithEmail ?
                         <Row>
-                            <Column
-                                onClick={() => { handleDisplayToggle('signInWithGoogle') }}
-                                style={{ marginLeft: '10px', marginRight: '10px', marginTop: '20px', padding: '10px', border: '1px solid', borderRadius: '3px', cursor: "pointer" }}>
-                                Sign In With Google
-                            </Column>
-                            <Column
-                                onClick={() => { handleDisplayToggle('signUpWithEmail') }}
-                                style={{ marginLeft: '10px', marginRight: '10px', marginTop: '20px', padding: '10px', border: '1px solid', borderRadius: '3px', cursor: "pointer" }}>
-                                Sign Up With Email
-                            </Column> </Row>
+                            {displayToggleOptionRow('signUpWithEmail', 'Sign up with Email')}
+                            {displayToggleOptionRow('signInWithGoogle', 'Sign in with Google')}
+                        </Row>
                         : showSignUpWithEmail ?
                             <Row>
-                                <Column
-                                    onClick={() => { handleDisplayToggle('signInWithGoogle') }}
-                                    style={{ marginLeft: '10px', marginRight: '10px', marginTop: '20px', padding: '10px', border: '1px solid', borderRadius: '3px', cursor: "pointer" }}>
-                                    Sign In With Google
-                                </Column>
-                                <Column
-                                    onClick={() => { handleDisplayToggle('signInWithEmail') }}
-                                    style={{ marginLeft: '10px', marginRight: '10px', marginTop: '20px', padding: '10px', border: '1px solid', borderRadius: '3px', cursor: "pointer" }}>
-                                    Sign In With Email
-                                </Column> </Row> : null}
+                                {displayToggleOptionRow('signInWithGoogle', 'Sign in with Google')}
+                                {displayToggleOptionRow('signInWithEmail', 'Sign in with Email')}
+                            </Row> : null}
             </Row>
         </Column>
     );
