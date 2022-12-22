@@ -54,13 +54,18 @@ function LoginComponent() {
     });
 
     const signInWithEmail = async (data) => {
-        await apiServices.signInWithEmail(data.email, data.password)
-            .then(res => {
-                console.log(res);
-                actions.generalActions.setUser(res.data);
-                actions.generalActions.login()
-            })
-            .catch(err => handleError(err.response.data))
+        if (data && data.email && data.password) {
+            await apiServices.signInWithEmail(data.email, data.password)
+                .then(res => {
+                    console.log(res);
+                    actions.generalActions.setUser(res.data);
+                    actions.generalActions.login()
+                })
+                .catch(err => handleError(err.response.data))
+        }
+        else {
+            handleError('Please Enter An Email And Password')
+        }
     }
 
     const signUpWithEmail = async (data) => {
@@ -78,7 +83,9 @@ function LoginComponent() {
                 handleError(`Passwords Don't Match`)
             }
         }
-        else (handleError(`Please Make Sure All Inputs Were Entered`))
+        else {
+            handleError(`Please Make Sure All Inputs Were Entered`)
+        }
     }
 
     const handleDisplayToggle = async (currentDisplay) => {
