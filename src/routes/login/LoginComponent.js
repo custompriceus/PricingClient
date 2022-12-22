@@ -13,7 +13,12 @@ function LoginComponent() {
     const [showSignUpWithEmail, setShowSignUpWithEmail] = useState(false);
     const [showSignInWithEmail, setShowSignInWithEmail] = useState(false);
     const [showSignInWithGoogle, setShowSignInWithGoogle] = useState(true);
+    const [errorMessage, setErrorMessage] = useState();
 
+    const handleError = (error) => {
+        console.log(error);
+        setErrorMessage(error)
+    }
 
     const login = async (token, type, sub, email) => {
         actions.generalActions.setisbusy()
@@ -55,20 +60,29 @@ function LoginComponent() {
                 actions.generalActions.setUser(res.data);
                 actions.generalActions.login()
             })
-            .catch(err => console.log(err.response))
+            .catch(err => handleError(err.response.data))
     }
 
     const signUpWithEmail = async (data) => {
-        await apiServices.signUpWithEmail(data.email, data.password)
-            .then(res => {
-                console.log(res);
-                actions.generalActions.setUser(res.data);
-                actions.generalActions.login()
-            })
-            .catch(err => console.log(err.response))
+        if (data && data.password && data.reTypePassword) {
+            if (data.password === data.reTypePassword) {
+                await apiServices.signUpWithEmail(data.email, data.password)
+                    .then(res => {
+                        console.log(res);
+                        actions.generalActions.setUser(res.data);
+                        actions.generalActions.login()
+                    })
+                    .catch(err => handleError(err.response.data))
+            }
+            else {
+                handleError(`Passwords Don't Match`)
+            }
+        }
+        else (handleError(`Please Make Sure All Inputs Were Entered`))
     }
 
     const handleDisplayToggle = async (currentDisplay) => {
+        setErrorMessage()
         switch (currentDisplay) {
             case ('signInWithGoogle'):
                 setShowSignInWithGoogle(true)
@@ -129,6 +143,7 @@ function LoginComponent() {
             </Row> : null}
             {showSignUpWithEmail ? <FormComponent
                 handleSubmit={signUpWithEmail}
+                error={errorMessage ? errorMessage : null}
                 items={
                     [
                         { text: 'Email', register: 'email' },
@@ -141,6 +156,7 @@ function LoginComponent() {
             {showSignInWithEmail ?
                 <FormComponent
                     handleSubmit={signInWithEmail}
+                    error={errorMessage ? errorMessage : null}
                     items={
                         [
                             { text: 'Email', register: 'email' },

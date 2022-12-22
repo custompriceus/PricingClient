@@ -57,6 +57,7 @@ function FormComponent(props) {
                     </Row>
                     : null
             }
+            {props.error ? <Row vertical='center' horizontal='center' style={{ color: 'red', margin: '10px' }}>{props.error}</Row> : null}
             <Row vertical='center' horizontal='center'>
                 <AwesomeButtonComponent
                     text={props.text ? props.text : 'Get Price Quote'}
