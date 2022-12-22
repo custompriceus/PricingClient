@@ -166,6 +166,7 @@ function LoginComponent() {
                     text={'Sign In'}
                 />
                 : null}
+            <Row center='vertical' horizontal='vertical' style={{ marginTop: '10px' }}>OR</Row>
             <Row center='vertical' horizontal='vertical'>
                 {showSignInWithGoogle ?
                     <Row>
