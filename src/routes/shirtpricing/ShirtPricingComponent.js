@@ -99,7 +99,7 @@ function ShirtPricingComponent() {
 
     const handleSubmit = async (data) => {
         actions.generalActions.setisbusy()
-        await apiServices.getPriceQuote(state.generalStates.user.accessToken, data, selectedAdditionalItems)
+        await apiServices.getPriceQuote(state.generalStates.user.accessToken, data, selectedAdditionalItems, state.generalStates.user.email)
             .then(res => {
                 setPricing(data);
                 setShirtQuantity(parseInt(res.data.shirtQuantity));

@@ -1,7 +1,7 @@
 import axios from 'axios';
 const url = process.env.REACT_APP_SERVER_URL
 
-export function getPriceQuote(accessToken, inputs, selectedAdditionalItems) {
+export function getPriceQuote(accessToken, inputs, selectedAdditionalItems, email) {
     console.log('get price quote');
     return new Promise((resolve, reject) => {
         axios({
@@ -12,7 +12,8 @@ export function getPriceQuote(accessToken, inputs, selectedAdditionalItems) {
             },
             data: {
                 inputs: inputs,
-                selectedAdditionalItems: selectedAdditionalItems
+                selectedAdditionalItems: selectedAdditionalItems,
+                email: email
             }
         })
             .then(res => {
