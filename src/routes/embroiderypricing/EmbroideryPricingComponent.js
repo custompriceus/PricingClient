@@ -39,7 +39,7 @@ function EmbroideryPricingComponent() {
     useEffect(() => {
         const fetchData = async () => {
             actions.generalActions.setisbusy()
-            await apiServices.getEmbroideryShirtPrices()
+            await apiServices.getEmbroideryPrices(state.generalStates.user.accessToken)
                 .then(res => {
                     setEmbroideryDbPrices(res.data);
                     actions.generalActions.resetisbusy();

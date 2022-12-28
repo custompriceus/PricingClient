@@ -62,8 +62,10 @@ function PriceListComponent() {
 
     const fetchData = async () => {
         actions.generalActions.setisbusy()
-        await apiServices.getPricingList()
+
+        await apiServices.getPricingList(state.generalStates.user.accessToken)
             .then(res => {
+                console.log('new,', res.data)
                 setPrices(res.data)
                 actions.generalActions.resetisbusy();
             })

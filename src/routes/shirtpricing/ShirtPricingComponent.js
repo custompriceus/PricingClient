@@ -97,77 +97,41 @@ function ShirtPricingComponent() {
         setSelectedAdditionalItems(clone)
     };
 
-    const handleSubmit = (data) => {
-        const shirtCost = parseFloat(data.shirtCost);
-        const shirtQuantity = parseInt(data.quantity);
-        const markUp = parseFloat(data.markUp);
-        const printSideOneColors = data.printSideOneColors;
-        const printSideTwoColors = data.printSideTwoColors;
-        const jerseyNumberSides = parseInt(data.jerseyNumberSides);
+    const handleSubmit = async (data) => {
+        actions.generalActions.setisbusy()
+        await apiServices.getPriceQuote(state.generalStates.user.accessToken, data, selectedAdditionalItems)
+            .then(res => {
+                setPricing(data);
+                setShirtQuantity(parseInt(res.data.shirtQuantity));
+                setShirtCost(res.data.shirtCost);
+                setMarkUp(res.data.markUp);
+                setPrintSideOneColors(res.data.printSideOneColors);
+                setPrintSideTwoColors(res.data.printSideTwoColors);
+                setJerseyNumberSides(res.data.jerseyNumberSides);
+                setShirtQuantityBucket(res.data.shirtQuantityBucket);
+                setPrintSideOneCost(res.data.printSideOneCost);
+                setPrintSideTwoCost(res.data.printSideTwoCost);
+                setJerseyNumberCost(res.data.jerseyNumberCost);
+                setFinalSelectedItems(res.data.finalSelectedItems);
+                setFinalSelectedItemsString(res.data.finalSelectedItemsString);
+                setAdditionalItemsCost(res.data.additionalItemsCost)
+                setNetCost(res.data.netCost);
+                setProfit(res.data.profit);
+                setRetailPrice(res.data.retailPrice);
+                setTotalCost(res.data.totalCost);
+                setTotalProfit(res.data.totalProfit);
 
-        setPricing(data);
-        setShirtQuantity(parseInt(shirtQuantity));
-        setShirtCost(shirtCost);
-        setMarkUp(markUp);
-        setPrintSideOneColors(printSideOneColors);
-        setPrintSideTwoColors(printSideTwoColors);
-        setJerseyNumberSides(jerseyNumberSides);
+                setSelectedAdditionalItems(res.data.selectedAdditionalItems)
+                actions.generalActions.resetisbusy();
+            })
+            .catch(err => console.log(err.response))
 
-        const shirtQuantityBucket = getShirtQuantityBucket(shirtQuantity);
-        setShirtQuantityBucket(shirtQuantityBucket);
-
-        const printSideOneCost = printSideOneColors ? getPrintCost(shirtQuantityBucket, printSideOneColors, dbPrices) : 0;
-        setPrintSideOneCost(printSideOneCost);
-
-        const printSideTwoCost = printSideTwoColors ? getPrintCost(shirtQuantityBucket, printSideTwoColors, dbPrices) : 0;
-        setPrintSideTwoCost(printSideTwoCost);
-
-        const jerseyNumberCost = jerseyNumberSides ? jerseyNumberSides * 2 : 0;
-        setJerseyNumberCost(jerseyNumberCost);
-
-        let finalSelectedItems = [];
-        let finalSelectedItemsString = ''
-        selectedAdditionalItems.map(additionalItem => {
-            if (additionalItem.checked) {
-                finalSelectedItems.push(additionalItem.name);
-                if (finalSelectedItemsString === '') {
-                    finalSelectedItemsString += additionalItem.name
-                }
-                else {
-                    finalSelectedItemsString += ', ' + additionalItem.name
-                }
-            }
-        })
-
-        setFinalSelectedItems(finalSelectedItems);
-        setFinalSelectedItemsString(finalSelectedItemsString);
-
-        let additionalItemsCost = 0.00;
-        if (finalSelectedItems && finalSelectedItems.map) {
-            const additionalItemsPricePer = getAdditionalItemsPrice(shirtQuantity);
-            additionalItemsCost = finalSelectedItems.length * additionalItemsPricePer;
-        }
-        setAdditionalItemsCost(additionalItemsCost)
-
-        const netCost = (printSideOneCost + printSideTwoCost + shirtCost + jerseyNumberCost + additionalItemsCost);
-        setNetCost(netCost);
-
-        const profit = (netCost * (markUp / 100));
-        setProfit(profit);
-
-        const retailPrice = netCost + profit;
-        setRetailPrice(retailPrice);
-
-        setTotalCost((netCost * shirtQuantity));
-        setTotalProfit((profit * shirtQuantity));
-
-        setSelectedAdditionalItems(additionalItems)
     }
 
     useEffect(() => {
         const fetchData = async () => {
             actions.generalActions.setisbusy()
-            await apiServices.getShirtPrices()
+            await apiServices.getShirtPrices(state.generalStates.user.accessToken)
                 .then(res => {
                     setdbPrices(res.data);
                     actions.generalActions.resetisbusy();

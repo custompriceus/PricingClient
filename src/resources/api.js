@@ -1,6 +1,31 @@
 import axios from 'axios';
 const url = process.env.REACT_APP_SERVER_URL
 
+export function getPriceQuote(accessToken, inputs, selectedAdditionalItems) {
+    console.log('get price quote');
+    return new Promise((resolve, reject) => {
+        axios({
+            url: url + "api/user/getPriceQuote",
+            method: "POST",
+            headers: {
+                "x-access-token": accessToken
+            },
+            data: {
+                inputs: inputs,
+                selectedAdditionalItems: selectedAdditionalItems
+            }
+        })
+            .then(res => {
+                resolve(res)
+            })
+            .catch(err => {
+                console.log('error');
+                console.log(err)
+                reject(err)
+            })
+    })
+}
+
 export function postNewLightDarkPrices(accessToken, newShirtPrices) {
     return new Promise((resolve, reject) => {
         axios({
@@ -47,11 +72,14 @@ export function postNewEmbroideryPrices(accessToken, newEmbroideryPrices) {
     })
 }
 
-export function getShirtPrices() {
+export function getShirtPrices(accessToken) {
     return new Promise((resolve, reject) => {
         axios({
-            url: url + "shirtprices",
-            method: "GET",
+            url: url + "api/user/shirtprices",
+            method: "POST",
+            headers: {
+                "x-access-token": accessToken
+            },
         })
             .then(res => {
                 resolve(res)
@@ -64,11 +92,14 @@ export function getShirtPrices() {
     })
 }
 
-export function getEmbroideryShirtPrices() {
+export function getEmbroideryPrices(accessToken) {
     return new Promise((resolve, reject) => {
         axios({
-            url: url + "embroideryshirtprices",
-            method: "GET",
+            url: url + "api/user/embroideryprices",
+            method: "POST",
+            headers: {
+                "x-access-token": accessToken
+            },
         })
             .then(res => {
                 resolve(res)
@@ -81,11 +112,14 @@ export function getEmbroideryShirtPrices() {
     })
 }
 
-export function getPricingList() {
+export function getPricingList(accessToken) {
     return new Promise((resolve, reject) => {
         axios({
-            url: url + "pricinglist",
-            method: "GET",
+            url: url + "api/user/pricinglist",
+            method: "POST",
+            headers: {
+                "x-access-token": accessToken
+            },
         })
             .then(res => {
                 resolve(res)
