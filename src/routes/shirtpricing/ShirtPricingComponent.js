@@ -5,6 +5,7 @@ import { StoreContext } from "../../context/store/storeContext";
 import LoadingComponent from '../../components/loading';
 import * as apiServices from '../../resources/api';
 import { formatNumber } from '../../resources/utilities';
+import { validateInputs } from '../../resources/utilities';
 import FormComponent from 'components/FormComponent';
 import PricingResultsRowComponent from 'components/PricingResultsRowComponent';
 
@@ -66,6 +67,7 @@ function ShirtPricingComponent() {
     const [totalCost, setTotalCost] = useState();
     const [totalProfit, setTotalProfit] = useState();
     const [retailPrice, setRetailPrice] = useState();
+    const [formErrors, setFormErrors] = useState();
 
     const [dbPrices, setdbPrices] = useState();
 
@@ -92,34 +94,39 @@ function ShirtPricingComponent() {
 
     const handleSubmit = async (data) => {
         actions.generalActions.setisbusy()
-        await apiServices.getShirtPriceQuote(state.generalStates.user.accessToken, data, selectedAdditionalItems, state.generalStates.user.email)
-            .then(res => {
-                setShirtQuantity(parseInt(res.data.shirtQuantity));
-                setShirtCost(res.data.shirtCost);
-                setMarkUp(res.data.markUp);
-                setPrintSideOneColors(res.data.printSideOneColors);
-                setPrintSideTwoColors(res.data.printSideTwoColors);
-                setJerseyNumberSides(res.data.jerseyNumberSides);
-                setPrintSideOneCost(res.data.printSideOneCost);
-                setPrintSideTwoCost(res.data.printSideTwoCost);
-                setJerseyNumberCost(res.data.jerseyNumberCost);
-                setFinalSelectedItems(res.data.finalSelectedItems);
-                setFinalSelectedItemsString(res.data.finalSelectedItemsString);
-                setAdditionalItemsCost(res.data.additionalItemsCost)
-                setNetCost(res.data.netCost);
-                setProfit(res.data.profit);
-                setRetailPrice(res.data.retailPrice);
-                setTotalCost(res.data.totalCost);
-                setTotalProfit(res.data.totalProfit);
+        const validatedInputs = validateInputs(data);
+        if (validatedInputs.map && validatedInputs.length > 0) {
+            setFormErrors(validatedInputs);
+        }
+        else {
+            await apiServices.getShirtPriceQuote(state.generalStates.user.accessToken, data, selectedAdditionalItems, state.generalStates.user.email)
+                .then(res => {
+                    setShirtQuantity(parseInt(res.data.shirtQuantity));
+                    setShirtCost(res.data.shirtCost);
+                    setMarkUp(res.data.markUp);
+                    setPrintSideOneColors(res.data.printSideOneColors);
+                    setPrintSideTwoColors(res.data.printSideTwoColors);
+                    setJerseyNumberSides(res.data.jerseyNumberSides);
+                    setPrintSideOneCost(res.data.printSideOneCost);
+                    setPrintSideTwoCost(res.data.printSideTwoCost);
+                    setJerseyNumberCost(res.data.jerseyNumberCost);
+                    setFinalSelectedItems(res.data.finalSelectedItems);
+                    setFinalSelectedItemsString(res.data.finalSelectedItemsString);
+                    setAdditionalItemsCost(res.data.additionalItemsCost)
+                    setNetCost(res.data.netCost);
+                    setProfit(res.data.profit);
+                    setRetailPrice(res.data.retailPrice);
+                    setTotalCost(res.data.totalCost);
+                    setTotalProfit(res.data.totalProfit);
 
-                setSelectedAdditionalItems(res.data.selectedAdditionalItems)
-                actions.generalActions.resetisbusy();
-            })
-            .catch(err => {
-                actions.generalActions.resetisbusy();
-                console.log(err.response)
-            })
-
+                    setSelectedAdditionalItems(res.data.selectedAdditionalItems)
+                    setFormErrors([])
+                })
+                .catch(err => {
+                    console.log(err.response)
+                })
+        }
+        actions.generalActions.resetisbusy();
     }
 
     useEffect(() => {
@@ -142,6 +149,13 @@ function ShirtPricingComponent() {
 
     return (
         <Column >
+            {formErrors ?
+                formErrors.map(error => {
+                    return (
+                        <PricingResultsRowComponent hideValue hideColon text={`Error: ${error.message}`} style={{ color: 'red' }} />
+                    )
+                })
+                : null}
             <Row>
                 <Column flex={.5}>
                     <FormComponent
