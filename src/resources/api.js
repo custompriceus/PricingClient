@@ -1,11 +1,34 @@
 import axios from 'axios';
 const url = process.env.REACT_APP_SERVER_URL
 
-export function getPriceQuote(accessToken, inputs, selectedAdditionalItems, email) {
-    console.log('get price quote');
+export function getEmbroideryPriceQuote(accessToken, inputs, email) {
     return new Promise((resolve, reject) => {
         axios({
-            url: url + "api/user/getPriceQuote",
+            url: url + "api/user/getEmbroideryPriceQuote",
+            method: "POST",
+            headers: {
+                "x-access-token": accessToken
+            },
+            data: {
+                inputs: inputs,
+                email: email
+            }
+        })
+            .then(res => {
+                resolve(res)
+            })
+            .catch(err => {
+                console.log('error');
+                console.log(err)
+                reject(err)
+            })
+    })
+}
+
+export function getShirtPriceQuote(accessToken, inputs, selectedAdditionalItems, email) {
+    return new Promise((resolve, reject) => {
+        axios({
+            url: url + "api/user/getShirtPriceQuote",
             method: "POST",
             headers: {
                 "x-access-token": accessToken

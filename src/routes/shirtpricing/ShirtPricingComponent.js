@@ -4,15 +4,11 @@ import { createUseStyles } from 'react-jss';
 import { StoreContext } from "../../context/store/storeContext";
 import LoadingComponent from '../../components/loading';
 import * as apiServices from '../../resources/api';
-import { getShirtQuantityBucket } from '../../resources/utilities';
-import { getPrintCost } from '../../resources/utilities';
-import { getAdditionalItemsPrice } from '../../resources/utilities';
 import { formatNumber } from '../../resources/utilities';
 import FormComponent from 'components/FormComponent';
 import PricingResultsRowComponent from 'components/PricingResultsRowComponent';
 
 const useStyles = createUseStyles({
-
     cardsContainer: {
         marginRight: -30,
         marginTop: -30
@@ -55,7 +51,6 @@ const useStyles = createUseStyles({
 function ShirtPricingComponent() {
     const classes = useStyles();
     const { actions, state } = useContext(StoreContext);
-    const [pricing, setPricing] = useState();
     const [shirtCost, setShirtCost] = useState();
     const [jerseyNumberCost, setJerseyNumberCost] = useState();
     const [markUp, setMarkUp] = useState();
@@ -71,8 +66,6 @@ function ShirtPricingComponent() {
     const [totalCost, setTotalCost] = useState();
     const [totalProfit, setTotalProfit] = useState();
     const [retailPrice, setRetailPrice] = useState();
-
-    const [shirtQuantityBucket, setShirtQuantityBucket] = useState();
 
     const [dbPrices, setdbPrices] = useState();
 
@@ -99,16 +92,14 @@ function ShirtPricingComponent() {
 
     const handleSubmit = async (data) => {
         actions.generalActions.setisbusy()
-        await apiServices.getPriceQuote(state.generalStates.user.accessToken, data, selectedAdditionalItems, state.generalStates.user.email)
+        await apiServices.getShirtPriceQuote(state.generalStates.user.accessToken, data, selectedAdditionalItems, state.generalStates.user.email)
             .then(res => {
-                setPricing(data);
                 setShirtQuantity(parseInt(res.data.shirtQuantity));
                 setShirtCost(res.data.shirtCost);
                 setMarkUp(res.data.markUp);
                 setPrintSideOneColors(res.data.printSideOneColors);
                 setPrintSideTwoColors(res.data.printSideTwoColors);
                 setJerseyNumberSides(res.data.jerseyNumberSides);
-                setShirtQuantityBucket(res.data.shirtQuantityBucket);
                 setPrintSideOneCost(res.data.printSideOneCost);
                 setPrintSideTwoCost(res.data.printSideTwoCost);
                 setJerseyNumberCost(res.data.jerseyNumberCost);
@@ -124,7 +115,10 @@ function ShirtPricingComponent() {
                 setSelectedAdditionalItems(res.data.selectedAdditionalItems)
                 actions.generalActions.resetisbusy();
             })
-            .catch(err => console.log(err.response))
+            .catch(err => {
+                actions.generalActions.resetisbusy();
+                console.log(err.response)
+            })
 
     }
 

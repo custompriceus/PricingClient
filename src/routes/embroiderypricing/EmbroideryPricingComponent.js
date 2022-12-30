@@ -4,16 +4,11 @@ import { StoreContext } from "../../context/store/storeContext";
 import LoadingComponent from '../../components/loading';
 import * as apiServices from '../../resources/api';
 import { formatNumber } from '../../resources/utilities';
-import { getEmbroideryShirtQuantityBucket } from '../../resources/utilities';
-import { getStitchQuantityBucket } from '../../resources/utilities';
-import { getEmbroideryPrintCost } from '../../resources/utilities';
 import FormComponent from 'components/FormComponent';
 import PricingResultsRowComponent from 'components/PricingResultsRowComponent';
 
 function EmbroideryPricingComponent() {
-
     const { actions, state } = useContext(StoreContext);
-    const [pricing, setPricing] = useState();
     const [shirtCost, setShirtCost] = useState();
     const [markUp, setMarkUp] = useState();
     const [shirtQuantity, setShirtQuantity] = useState();
@@ -33,7 +28,6 @@ function EmbroideryPricingComponent() {
     const [location3PrintCost, setLocation3PrintCost] = useState();
     const [location4PrintCost, setLocation4PrintCost] = useState();
 
-    const [shirtQuantityBucket, setShirtQuantityBucket] = useState();
     const [embroideryDbPrices, setEmbroideryDbPrices] = useState();
 
     useEffect(() => {
@@ -53,54 +47,32 @@ function EmbroideryPricingComponent() {
         return <LoadingComponent loading />
     }
 
-    const handleSubmit = (data) => {
-        const shirtCost = parseFloat(data.shirtCost);
-        const shirtQuantity = parseInt(data.quantity);
-        const markUp = parseFloat(data.markUp);
-        const location1Stitches = data.location1Stitches;
-        const location2Stitches = data.location2Stitches;
-        const location3Stitches = data.location3Stitches;
-        const location4Stitches = data.location4Stitches;
-
-        setPricing(data);
-        setShirtQuantity(parseInt(shirtQuantity));
-        setShirtCost(shirtCost);
-        setMarkUp(markUp);
-        setLocation1Stitches(location1Stitches);
-        setLocation2Stitches(location2Stitches);
-        setLocation3Stitches(location3Stitches);
-        setLocation4Stitches(location4Stitches);
-
-        const embroideryShirtQuantityBucket = getEmbroideryShirtQuantityBucket(shirtQuantity);
-        setShirtQuantityBucket(embroideryShirtQuantityBucket);
-
-        const location1StitchBucket = location1Stitches ? getStitchQuantityBucket(parseInt(location1Stitches)) : null
-        const location1PrintCost = location1Stitches && location1Stitches > 0 ? getEmbroideryPrintCost(embroideryShirtQuantityBucket, location1StitchBucket, embroideryDbPrices) : 0;
-        setLocation1PrintCost(location1PrintCost);
-
-        const location2StitchBucket = location2Stitches ? getStitchQuantityBucket(parseInt(location2Stitches)) : null
-        const location2PrintCost = location2Stitches && location2Stitches > 0 ? getEmbroideryPrintCost(embroideryShirtQuantityBucket, location2StitchBucket, embroideryDbPrices) : 0;
-        setLocation2PrintCost(location2PrintCost);
-
-        const location3StitchBucket = location3Stitches ? getStitchQuantityBucket(parseInt(location3Stitches)) : null
-        const location3PrintCost = location3Stitches && location3Stitches > 0 ? getEmbroideryPrintCost(embroideryShirtQuantityBucket, location3StitchBucket, embroideryDbPrices) : 0;
-        setLocation3PrintCost(location3PrintCost);
-
-        const location4StitchBucket = location4Stitches ? getStitchQuantityBucket(parseInt(location4Stitches)) : null
-        const location4PrintCost = location4Stitches && location4Stitches > 0 ? getEmbroideryPrintCost(embroideryShirtQuantityBucket, location4StitchBucket, embroideryDbPrices) : 0;
-        setLocation4PrintCost(location4PrintCost);
-
-        const netCost = (location1PrintCost + location2PrintCost + location3PrintCost + location4PrintCost + shirtCost)
-        setNetCost(netCost);
-
-        const profit = (netCost * (markUp / 100))
-        setProfit(profit);
-
-        const retailPrice = netCost + profit;
-        setRetailPrice(retailPrice);
-
-        setTotalCost((netCost * shirtQuantity));
-        setTotalProfit((profit * shirtQuantity));
+    const handleSubmit = async (data) => {
+        actions.generalActions.setisbusy()
+        await apiServices.getEmbroideryPriceQuote(state.generalStates.user.accessToken, data, state.generalStates.user.email)
+            .then(res => {
+                setShirtQuantity(parseInt(res.data.shirtQuantity));
+                setShirtCost(res.data.shirtCost);
+                setMarkUp(res.data.markUp);
+                setLocation1Stitches(res.data.location1Stitches);
+                setLocation2Stitches(res.data.location2Stitches);
+                setLocation3Stitches(res.data.location3Stitches);
+                setLocation4Stitches(res.data.location4Stitches);
+                setLocation1PrintCost(res.data.location1PrintCost);
+                setLocation2PrintCost(res.data.location2PrintCost);
+                setLocation3PrintCost(res.data.location3PrintCost);
+                setLocation4PrintCost(res.data.location4PrintCost);
+                setNetCost(res.data.netCost);
+                setProfit(res.data.profit);
+                setRetailPrice(res.data.retailPrice);
+                setTotalCost(res.data.totalCost);
+                setTotalProfit(res.data.totalProfit);
+                actions.generalActions.resetisbusy();
+            })
+            .catch(err => {
+                actions.generalActions.resetisbusy();
+                console.log(err.response)
+            })
     }
 
     return (
