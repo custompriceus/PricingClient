@@ -30,6 +30,50 @@ export function formatNumber(number) {
     return (Math.round(newNumber * 100) / 100).toFixed(2)
 }
 
+function getInputFieldDetails(inputField) {
+    switch (inputField) {
+        case ('quantity'):
+            return {
+                required: true,
+                errorDisplayMessage: 'Quantity ',
+                inputValueType: 'integer'
+            }
+        case ('printSideOneColors'):
+            return {
+                required: false,
+                errorDisplayMessage: 'Print Side One Colors ',
+                inputValueType: 'integer'
+            }
+        case ('printSideTwoColors'):
+            return {
+                required: false,
+                errorDisplayMessage: 'Print Side Two Colors ',
+                inputValueType: 'integer'
+            }
+        case ('jerseyNumberSides'):
+            return {
+                required: false,
+                errorDisplayMessage: 'Jersey Number Sides ',
+                inputValueType: 'integer'
+            }
+        case ('shirtCost'):
+            return {
+                required: true,
+                errorDisplayMessage: 'Shirt Cost ',
+                inputValueType: 'float'
+            }
+        case ('markUp'):
+            return {
+                required: true,
+                errorDisplayMessage: 'Mark Up ',
+                inputValueType: 'float'
+            }
+        default:
+            console.log(`Key Not Found`);
+            return true;
+    }
+}
+
 function validateInput(inputType, input) {
     switch (inputType) {
         case ('integer'):
@@ -37,59 +81,7 @@ function validateInput(inputType, input) {
         case ('float'):
             return (!isNaN(input) && input !== '0') ? true : false
         default:
-            console.log(`Key Not Found`);
-            return false;
-    }
-}
-
-function checkInput(key, input) {
-    switch (key) {
-        case ('quantity'):
-            return input !== '' && validateInput('integer', input)
-        case ('printSideOneColors'):
-            return validateInput('integer', input)
-        case ('printSideTwoColors'):
-            return validateInput('integer', input)
-        case ('jerseyNumberSides'):
-            return validateInput('integer', input)
-        case ('shirtCost'):
-            return input !== '' && validateInput('float', input)
-        case ('markUp'):
-            return input !== '' && validateInput('float', input)
-        default:
-            console.log(`Key Not Found`);
-            return true;
-    }
-}
-
-function checkMandatoryInput(key) {
-    switch (key) {
-        case ('quantity'):
-            return true
-        case ('shirtCost'):
-            return true
-        case ('markUp'):
-            return true
-        default:
-            return false;
-    }
-}
-
-function getErrorDisplayMessage(key) {
-    switch (key) {
-        case ('quantity'):
-            return `Quantity `
-        case ('shirtCost'):
-            return `Shirt Cost `
-        case ('markUp'):
-            return `Mark Up `
-        case ('printSideOneColors'):
-            return `Print Side One Colors `
-        case ('printSideTwoColors'):
-            return `Print Side Two Colors `
-        case ('jerseyNumberSides'):
-            return `Jersey Number Sides `
-        default:
+            console.log(`Input Type Not Found`);
             return false;
     }
 }
@@ -97,22 +89,24 @@ function getErrorDisplayMessage(key) {
 export function validateInputs(inputs) {
     const inputErrors = [];
     Object.keys(inputs).forEach(function (key, index) {
-        if (inputs[key] === '') {
-            if (checkMandatoryInput(key)) {
+        const inputFieldDetails = getInputFieldDetails(key);
+
+        if (inputs[key] === '' || inputs[key] === '0') {
+            if (inputFieldDetails.required) {
                 inputErrors.push({
                     key: key,
                     value: 'blank',
-                    message: `${getErrorDisplayMessage(key)} cannot be blank`
+                    message: `${inputFieldDetails.errorDisplayMessage} cannot be blank`
                 })
             }
         }
         else {
-            const validInput = checkInput(key, inputs[key])
+            const validInput = validateInput(inputFieldDetails.inputValueType, inputs[key])
             if (!validInput) {
                 inputErrors.push({
                     key: key,
                     value: inputs[key],
-                    message: `${getErrorDisplayMessage(key)}'${inputs[key]}' is invalid`
+                    message: `${inputFieldDetails.errorDisplayMessage}'${inputs[key]}' is invalid`
                 })
             }
         }
