@@ -33,31 +33,34 @@ function FormComponent(props) {
                     </Row>
                 )
             })}
-            {
-                props.selectedAdditionalItems ?
-                    <Row horizontal="spaced" style={{ margin: '10px' }} wrap>
-                        {props.selectedAdditionalItems.map(item => {
-                            return (
-                                <Column
-                                    style={{ minWidth: 200 }}
-                                    horizontal="left"
-                                    key={item.name ? item.name : null}
-                                >
-                                    <label>
-                                        <input
-                                            type="checkbox"
-                                            checked={item.checked}
-                                            onClick={() => props.handleAdditionalItems(item)}
-                                        />
-                                        {item.name}
-                                    </label>
-                                </Column>
-                            )
-                        })}
-                    </Row>
-                    : null
+            {props.selectedAdditionalItems ?
+                <Row horizontal="spaced" style={{ margin: '10px' }} wrap>
+                    {props.selectedAdditionalItems.map(item => {
+                        return (
+                            <Column
+                                style={{ minWidth: 200 }}
+                                horizontal="left"
+                                key={item.name ? item.name : null}
+                            >
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        checked={item.checked}
+                                        onClick={() => props.handleAdditionalItems(item)}
+                                    />
+                                    {item.name}
+                                </label>
+                            </Column>
+                        )
+                    })}
+                </Row>
+                : null
             }
-            {props.error ? <Row vertical='center' horizontal='center' style={{ color: 'red', margin: '10px' }}>{props.error}</Row> : null}
+            {props.error ?
+                <Row vertical='center' horizontal='center' style={{ color: 'red', margin: '10px' }}>
+                    {props.error}
+                </Row>
+                : null}
             <Row vertical='center' horizontal='center'>
                 <AwesomeButtonComponent
                     text={props.text ? props.text : 'Get Price Quote'}
