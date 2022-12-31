@@ -28,7 +28,7 @@ function FormComponent(props) {
                             {item.text}
                         </Column>
                         <Column flex={.5} style={{ marginRight: '10px' }}>
-                            <input type={item.type ? item.type : null} style={{}} {...register(item.register)} />
+                            <input defaultValue={item.value ? item.value : null} type={item.type ? item.type : null} style={{}} {...register(item.register)} />
                         </Column>
                     </Row>
                 )

@@ -9,6 +9,15 @@ import { validateInputs } from '../../resources/utilities';
 import FormComponent from 'components/FormComponent';
 import PricingResultsRowComponent from 'components/PricingResultsRowComponent';
 
+const defaultFormItems = [
+    { text: 'Quantity', register: 'quantity', value: null },
+    { text: 'Print Side One Colors', register: 'printSideOneColors', value: null },
+    { text: 'Print Side Two Colors', register: 'printSideTwoColors', value: null },
+    { text: 'Jersey Number Sides', register: 'jerseyNumberSides', value: null },
+    { text: 'Shirt Cost (1.50 for $1.50, 2.00 for $2.00, etc.)', register: 'shirtCost', value: null },
+    { text: 'Mark Up (50 for 50%, 100 for 100%, etc.)', register: 'markUp', value: null },
+]
+
 const useStyles = createUseStyles({
     cardsContainer: {
         marginRight: -30,
@@ -67,6 +76,7 @@ function ShirtPricingComponent() {
     const [totalCost, setTotalCost] = useState();
     const [totalProfit, setTotalProfit] = useState();
     const [retailPrice, setRetailPrice] = useState();
+    const [formItems, setFormItems] = useState(defaultFormItems);
     const [formErrors, setFormErrors] = useState();
 
     const [dbPrices, setdbPrices] = useState();
@@ -96,6 +106,24 @@ function ShirtPricingComponent() {
         actions.generalActions.setisbusy()
         const validatedInputs = validateInputs(data);
         if (validatedInputs.map && validatedInputs.length > 0) {
+            const adjustedItems = [];
+            formItems.map(item => {
+                const isItemAnError = validatedInputs.find(function (input) {
+                    return input.key === item.register;
+                });
+                if (!isItemAnError) {
+                    const key = item.register;
+                    adjustedItems.push({
+                        text: item.text,
+                        register: item.register,
+                        value: data[key]
+                    })
+                }
+                else {
+                    adjustedItems.push(item)
+                }
+            })
+            setFormItems(adjustedItems);
             setFormErrors(validatedInputs);
         }
         else {
@@ -121,6 +149,7 @@ function ShirtPricingComponent() {
 
                     setSelectedAdditionalItems(res.data.selectedAdditionalItems)
                     setFormErrors([])
+                    setFormItems(defaultFormItems);
                 })
                 .catch(err => {
                     console.log(err.response)
@@ -162,16 +191,7 @@ function ShirtPricingComponent() {
                         handleSubmit={handleSubmit}
                         selectedAdditionalItems={selectedAdditionalItems}
                         handleAdditionalItems={handleAdditionalItems}
-                        items={
-                            [
-                                { text: 'Quantity', register: 'quantity' },
-                                { text: 'Print Side One Colors', register: 'printSideOneColors' },
-                                { text: 'Print Side Two Colors', register: 'printSideTwoColors' },
-                                { text: 'Jersey Number Sides', register: 'jerseyNumberSides' },
-                                { text: 'Shirt Cost (1.50 for $1.50, 2.00 for $2.00, etc.)', register: 'shirtCost' },
-                                { text: 'Mark Up (50 for 50%, 100 for 100%, etc.)', register: 'markUp' },
-                            ]
-                        }
+                        items={formItems}
                     />
                 </Column>
                 <Column flex={0.5}>
