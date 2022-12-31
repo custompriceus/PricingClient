@@ -23,14 +23,21 @@ function FormComponent(props) {
         >
             {props.items.map(item => {
                 return (
-                    <Row style={{ margin: '10px' }} key={item.text ? item.text : null}>
-                        <Column flex={.5} style={{ marginRight: '10px' }}>
-                            {item.text}
-                        </Column>
-                        <Column flex={.5} style={{ marginRight: '10px' }}>
-                            <input defaultValue={item.value ? item.value : null} type={item.type ? item.type : null} style={{}} {...register(item.register)} />
-                        </Column>
-                    </Row>
+                    <Column flex={1}>
+                        <Row style={{ margin: '10px' }} key={item.text ? item.text : null}>
+                            <Column flex={.5} style={{ marginRight: '10px' }}>
+                                {item.text}
+                            </Column>
+                            <Column flex={.5} style={{ marginRight: '10px' }}>
+                                <input defaultValue={item.value ? item.value : null} type={item.type ? item.type : null} style={{}} {...register(item.register)} />
+                            </Column>
+                        </Row>
+                        {item.error ? <Row style={{ margin: '10px' }} key={item.error}>
+                            <Column flex={1} style={{ marginRight: '10px', color: 'red' }}>
+                                {item.error}
+                            </Column>
+                        </Row> : null}
+                    </Column>
                 )
             })}
             {props.selectedAdditionalItems ?

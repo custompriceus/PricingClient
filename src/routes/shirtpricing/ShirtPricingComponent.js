@@ -88,24 +88,21 @@ function ShirtPricingComponent() {
         actions.generalActions.setisbusy()
         const validatedInputs = validateInputs(data);
         if (validatedInputs.map && validatedInputs.length > 0) {
-            const adjustedItems = [];
+            const adjustedFormItems = [];
             formItems.map(item => {
                 const isItemAnError = validatedInputs.find(function (input) {
                     return input.key === item.register;
                 });
-                if (!isItemAnError) {
-                    const key = item.register;
-                    adjustedItems.push({
-                        text: item.text,
-                        register: item.register,
-                        value: data[key]
-                    })
-                }
-                else {
-                    adjustedItems.push(item)
-                }
+                const key = item.register;
+                adjustedFormItems.push({
+                    text: item.text,
+                    register: item.register,
+                    value: !isItemAnError ? data[key] : item.value,
+                    error: !isItemAnError ? null : isItemAnError.message
+                })
+
             })
-            setFormItems(adjustedItems);
+            setFormItems(adjustedFormItems);
             setFormErrors(validatedInputs);
             setPriceQuoteData({});
         }
@@ -138,13 +135,6 @@ function ShirtPricingComponent() {
 
     return (
         <Column >
-            {formErrors ?
-                formErrors.map(error => {
-                    return (
-                        <PricingResultsRowComponent hideValue hideColon text={`Error: ${error.message}`} style={{ color: 'red' }} />
-                    )
-                })
-                : null}
             <Row>
                 <Column flex={.5}>
                     <FormComponent
