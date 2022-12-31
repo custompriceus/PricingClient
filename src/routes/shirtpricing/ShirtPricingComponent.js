@@ -107,6 +107,7 @@ function ShirtPricingComponent() {
             })
             setFormItems(adjustedItems);
             setFormErrors(validatedInputs);
+            setPriceQuoteData({});
         }
         else {
             await apiServices.getShirtPriceQuote(state.generalStates.user.accessToken, data, selectedAdditionalItems, state.generalStates.user.email)

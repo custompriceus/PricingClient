@@ -27,6 +27,7 @@ function LoginComponent() {
             .then(res => {
                 actions.generalActions.setUser(res.data);
                 actions.generalActions.login()
+                actions.generalActions.resetisbusy()
             })
             .catch(err => console.log(err.response))
     }
