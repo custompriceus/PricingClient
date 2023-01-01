@@ -19,9 +19,6 @@ function FormComponent(props) {
     useEffect(() => {
         setFormItems(props.formItems);
         setSelectedAdditionaItems(props.selectedAdditionalItems);
-        console.log(props.formItems);
-        console.log(' ');
-        console.log(props.setSelectedAdditionaItems);
     }, []);
 
     if (!formItems) {
@@ -84,6 +81,11 @@ function FormComponent(props) {
                         </Row>
                         : null
                 }
+                {props.error ?
+                    <Row vertical='center' horizontal='center' style={{ color: 'red', margin: '10px' }}>
+                        {props.error}
+                    </Row>
+                    : null}
                 <Row vertical='center' horizontal='center'>
                     <AwesomeButtonComponent
                         text={props.text ? props.text : 'Get Price Quote'}

@@ -7,17 +7,30 @@ import LoadingComponent from '../../components/loading';
 import * as apiServices from '../../resources/api';
 import FormComponent from '../../components/FormComponent';
 
+const defaultSignUpItems = [
+    { text: 'Email', register: 'email' },
+    { text: 'Password', register: 'password', type: 'password' },
+    { text: 'Re-type Password', register: 'reTypePassword', type: 'password' },
+];
+
+const defaultSignInItems = [
+    { text: 'Email', register: 'email' },
+    { text: 'Password', register: 'password', type: 'password' },
+]
+
 function LoginComponent() {
     const { actions, state } = useContext(StoreContext);
     const [width, height] = useWindowSize();
     const [showSignUpWithEmail, setShowSignUpWithEmail] = useState(false);
     const [showSignInWithEmail, setShowSignInWithEmail] = useState(false);
     const [showSignInWithGoogle, setShowSignInWithGoogle] = useState(true);
-    const [errorMessage, setErrorMessage] = useState();
+    const [error, setError] = useState();
+    const [signUpForm, setSignUpForm] = useState(defaultSignUpItems);
+    const [signInForm, setSignInForm] = useState(defaultSignInItems);
 
     const handleError = (error) => {
         console.log(error);
-        setErrorMessage(error)
+        setError(error)
     }
 
     const login = async (token, type, sub, email) => {
@@ -90,7 +103,7 @@ function LoginComponent() {
     }
 
     const handleDisplayToggle = async (currentDisplay) => {
-        setErrorMessage()
+        setError()
         switch (currentDisplay) {
             case ('signInWithGoogle'):
                 setShowSignInWithGoogle(true)
@@ -149,28 +162,18 @@ function LoginComponent() {
                 googleLogin()
             }}><img src={require('../../assets/icons/google_signin_buttons/web/2x/btn_google_signin_dark_pressed_web@2x.png')} />
             </Row> : null}
-            {showSignUpWithEmail ? <FormComponent
-                handleSubmit={signUpWithEmail}
-                error={errorMessage ? errorMessage : null}
-                items={
-                    [
-                        { text: 'Email', register: 'email' },
-                        { text: 'Password', register: 'password', type: 'password' },
-                        { text: 'Re-type Password', register: 'reTypePassword', type: 'password' },
-                    ]
-                }
-                text={'Sign Up'}
-            /> : null}
+            {showSignUpWithEmail ?
+                <FormComponent
+                    handleSubmit={signUpWithEmail}
+                    error={error ? error : null}
+                    formItems={signUpForm ? signUpForm : null}
+                    text={'Sign Up'}
+                /> : null}
             {showSignInWithEmail ?
                 <FormComponent
                     handleSubmit={signInWithEmail}
-                    error={errorMessage ? errorMessage : null}
-                    items={
-                        [
-                            { text: 'Email', register: 'email' },
-                            { text: 'Password', register: 'password', type: 'password' },
-                        ]
-                    }
+                    error={error ? error : null}
+                    formItems={signInForm ? signInForm : null}
                     text={'Sign In'}
                 />
                 : null}
