@@ -56,7 +56,6 @@ function ShirtPricingComponent() {
     const [defaultShirtPricingResults, setDefaultShirtPricingResults] = useState([]);
     const [shirtPricingResults, setShirtPricingResults] = useState([]);
     const [selectedAdditionalItems, setSelectedAdditionalItems] = useState([]);
-    const [defaultSelectedAdditionalItems, setDefaultSelectedAdditionalItems] = useState([]);
     const [additionalItemsMinShirtQuantity, setAdditionalItemsMinShirtQuantity] = useState([]);
 
     const fetchData = async () => {
@@ -69,7 +68,6 @@ function ShirtPricingComponent() {
                 setShirtPricingForm(res.data.form);
                 setDefaultShirtPricingResults(res.data.results);
                 setShirtPricingResults(res.data.results);
-                setDefaultSelectedAdditionalItems(res.data.additionalItems.items);
                 setSelectedAdditionalItems(res.data.additionalItems.items);
                 setAdditionalItemsMinShirtQuantity(res.data.additionalItems.minShirtQuantity);
                 actions.generalActions.resetisbusy();
@@ -121,9 +119,16 @@ function ShirtPricingComponent() {
         else {
             await apiServices.getShirtPriceQuote(state.generalStates.user.accessToken, data, selectedAdditionalItems, state.generalStates.user.email)
                 .then(res => {
-                    console.log(res.data);
                     setShirtPricingResults(res.data);
-                    setSelectedAdditionalItems(defaultSelectedAdditionalItems)
+                    setSelectedAdditionalItems([
+                        { name: 'Nylon', checked: false },
+                        { name: 'Poly', checked: false },
+                        { name: 'Mesh', checked: false },
+                        { name: 'Jersey', checked: false },
+                        { name: 'Legs', checked: false },
+                        { name: 'Sweats', checked: false },
+                        { name: 'Sleeves', checked: false }
+                    ])
                     setShirtPricingForm(defaultShirtPricingForm);
                 })
                 .catch(err => {
@@ -146,7 +151,6 @@ function ShirtPricingComponent() {
                         selectedAdditionalItems={selectedAdditionalItems ? selectedAdditionalItems : null}
                         handleAdditionalItems={handleAdditionalItems}
                         formItems={shirtPricingForm ? shirtPricingForm : null}
-                        defaultFormItems={defaultShirtPricingForm ? defaultShirtPricingForm : null}
                     />
                 </Column>
                 <Column flex={0.5}>
