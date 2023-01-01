@@ -33,9 +33,9 @@ export function formatNumber(number) {
 function validateInput(inputType, input) {
     switch (inputType) {
         case ('integer'):
-            return ((input % 1 === 0) && input !== '0') ? true : false
+            return ((input % 1 === 0) && input !== '0' && parseInt(input) > 0) ? true : false
         case ('float'):
-            return (!isNaN(input) && input !== '0') ? true : false
+            return (!isNaN(input) && input !== '0' && parseFloat(input) > 0) ? true : false
         default:
             console.log(`Input Type Not Found`);
             return false;
