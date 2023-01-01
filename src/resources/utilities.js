@@ -30,50 +30,6 @@ export function formatNumber(number) {
     return (Math.round(newNumber * 100) / 100).toFixed(2)
 }
 
-function getInputFieldDetails(inputField) {
-    switch (inputField) {
-        case ('quantity'):
-            return {
-                required: true,
-                errorDisplayMessage: 'Quantity ',
-                inputValueType: 'integer'
-            }
-        case ('printSideOneColors'):
-            return {
-                required: false,
-                errorDisplayMessage: 'Print Side One Colors ',
-                inputValueType: 'integer'
-            }
-        case ('printSideTwoColors'):
-            return {
-                required: false,
-                errorDisplayMessage: 'Print Side Two Colors ',
-                inputValueType: 'integer'
-            }
-        case ('jerseyNumberSides'):
-            return {
-                required: false,
-                errorDisplayMessage: 'Jersey Number Sides ',
-                inputValueType: 'integer'
-            }
-        case ('shirtCost'):
-            return {
-                required: true,
-                errorDisplayMessage: 'Shirt Cost ',
-                inputValueType: 'float'
-            }
-        case ('markUp'):
-            return {
-                required: true,
-                errorDisplayMessage: 'Mark Up ',
-                inputValueType: 'float'
-            }
-        default:
-            console.log(`Key Not Found`);
-            return true;
-    }
-}
-
 function validateInput(inputType, input) {
     switch (inputType) {
         case ('integer'):
@@ -86,28 +42,48 @@ function validateInput(inputType, input) {
     }
 }
 
-export function validateInputs(inputs) {
+function getErrorDisplayMessage(key, value, message) {
+    return (
+        {
+            key: key,
+            value: 'blank',
+            errorDisplayMessage: message
+        }
+    )
+}
+export function validateInputs(inputs, shirtPricingForm, defaultShirtPricingForm, minShirtQuantityForAdditionalItems, additionalItems) {
     const inputErrors = [];
-    Object.keys(inputs).forEach(function (key, index) {
-        const inputFieldDetails = getInputFieldDetails(key);
 
+    Object.keys(inputs).forEach(function (key, index) {
+        const inputDetails = shirtPricingForm.find(form => form.register === key);
+        const defaultInputDetails = defaultShirtPricingForm.find(form => form.register === key);
         if (inputs[key] === '' || inputs[key] === '0') {
-            if (inputFieldDetails.required) {
-                inputErrors.push({
-                    key: key,
-                    value: 'blank',
-                    message: `${inputFieldDetails.errorDisplayMessage} cannot be blank`
-                })
+            if (inputDetails.required) {
+                inputErrors.push(getErrorDisplayMessage(key, 'blank', `${defaultInputDetails.errorDisplayMessage} cannot be blank`)
+                )
             }
         }
         else {
-            const validInput = validateInput(inputFieldDetails.inputValueType, inputs[key])
+            const validInput = validateInput(inputDetails.inputValueType, inputs[key])
             if (!validInput) {
-                inputErrors.push({
-                    key: key,
-                    value: inputs[key],
-                    message: `${inputFieldDetails.errorDisplayMessage}'${inputs[key]}' is invalid`
-                })
+                inputErrors.push(getErrorDisplayMessage(key, inputs[key], `${defaultInputDetails.errorDisplayMessage}'${inputs[key]}' is invalid`))
+            }
+            else {
+                if (inputDetails.minValue && inputDetails.minValue > parseFloat(inputs[key])) {
+                    inputErrors.push(getErrorDisplayMessage(key, inputs[key], `${defaultInputDetails.errorDisplayMessage} needs to be greater than ${inputDetails.minValue - 1}`))
+                }
+                else if (inputDetails.maxValue && inputDetails.maxValue < parseFloat(inputs[key])) {
+                    inputErrors.push(getErrorDisplayMessage(key, inputs[key], `${defaultInputDetails.errorDisplayMessage} needs to be less than ${inputDetails.maxValue + 1}`))
+                }
+                if (key === 'quantity' && additionalItems) {
+                    const additionalItemsLength = additionalItems.filter(function (item) {
+                        return item.checked;
+                    }).length
+                    const quantity = parseFloat(inputs[key]);
+                    if (additionalItemsLength > 0 && quantity < minShirtQuantityForAdditionalItems) {
+                        inputErrors.push(getErrorDisplayMessage(key, inputs[key], `Additional Items Require A Min Shirt Order of ${minShirtQuantityForAdditionalItems}`))
+                    }
+                }
             }
         }
     });

@@ -69,7 +69,10 @@ function PriceListComponent() {
                 setPrices(res.data)
                 actions.generalActions.resetisbusy();
             })
-            .catch(err => console.log(err.response))
+            .catch(err => {
+                actions.generalActions.resetisbusy();
+                console.log(err.response)
+            })
     }
 
     useEffect(() => {
