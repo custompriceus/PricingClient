@@ -56,7 +56,9 @@ function ShirtPricingComponent() {
     const [defaultShirtPricingResults, setDefaultShirtPricingResults] = useState([]);
     const [shirtPricingResults, setShirtPricingResults] = useState([]);
     const [selectedAdditionalItems, setSelectedAdditionalItems] = useState([]);
+    const [additionalItemsDisplayText, setAdditionalItemsDisplayText] = useState();
     const [additionalItemsMinShirtQuantity, setAdditionalItemsMinShirtQuantity] = useState([]);
+
 
     const fetchData = async () => {
         actions.generalActions.setisbusy()
@@ -69,6 +71,7 @@ function ShirtPricingComponent() {
                 setDefaultShirtPricingResults(res.data.results);
                 setShirtPricingResults(res.data.results);
                 setSelectedAdditionalItems(res.data.additionalItems.items);
+                setAdditionalItemsDisplayText(res.data.additionalItems.displayText);
                 setAdditionalItemsMinShirtQuantity(res.data.additionalItems.minShirtQuantity);
                 actions.generalActions.resetisbusy();
             })
@@ -121,13 +124,8 @@ function ShirtPricingComponent() {
                 .then(res => {
                     setShirtPricingResults(res.data);
                     setSelectedAdditionalItems([
-                        { name: 'Nylon', checked: false },
-                        { name: 'Poly', checked: false },
-                        { name: 'Mesh', checked: false },
-                        { name: 'Jersey', checked: false },
-                        { name: 'Legs', checked: false },
-                        { name: 'Sweats', checked: false },
-                        { name: 'Sleeves', checked: false }
+                        { name: 'Nylon, Poly, Mesh, Jersey', checked: false },
+                        { name: 'Legs, Sweats, Sleeves', checked: false }
                     ])
                     setShirtPricingForm(defaultShirtPricingForm);
                 })
@@ -150,6 +148,7 @@ function ShirtPricingComponent() {
                         handleSubmit={handleSubmit}
                         selectedAdditionalItems={selectedAdditionalItems ? selectedAdditionalItems : null}
                         handleAdditionalItems={handleAdditionalItems}
+                        additionalItemsDisplayText={additionalItemsDisplayText ? additionalItemsDisplayText : null}
                         formItems={shirtPricingForm ? shirtPricingForm : null}
                     />
                 </Column>

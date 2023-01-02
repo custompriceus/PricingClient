@@ -17,9 +17,66 @@ function FormComponent(props) {
     });
 
     useEffect(() => {
-        setFormItems(props.formItems);
+        setFormItems(props.formItems)
+        console.log('render form');
         setSelectedAdditionaItems(props.selectedAdditionalItems);
     }, []);
+
+    const renderFormItem = (item) => {
+        return (
+            <Column flex={1}>
+                <Row style={{ margin: '10px' }} key={item.text ? item.text : null}>
+                    <Column flex={.5} style={{ marginRight: '10px' }}>
+                        {item.text}
+                    </Column>
+                    <Column flex={.5} style={{ marginRight: '10px' }}>
+                        <input
+                            defaultValue={item.value ? item.value : null}
+                            type={item.type ? item.type : null}
+                            style={{}}
+                            {...register(item.register)} />
+                    </Column>
+                </Row>
+                {item.error ? <Row style={{ margin: '10px' }} key={item.errorDisplayMessage}>
+                    <Column flex={1} style={{ marginRight: '10px', color: 'red' }}>
+                        {item.errorDisplayMessage}
+                    </Column>
+                </Row> : null}
+            </Column>
+        )
+    };
+
+    const renderAdditionalItem = (item) => {
+        return (
+            <Row Row horizontal="left" style={{ margin: '10px' }} key={item.name ? item.name : null}>
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={item.checked}
+                        onClick={() => props.handleAdditionalItems(item)}
+                    />
+                    {item.name}
+                </label>
+            </Row>
+        )
+    };
+
+    const renderAdditionalItems = (items) => {
+        return (
+            <Column >
+                <Row horizontal="spaced" style={{ margin: '10px' }}>
+                    {props.additionalItemsDisplayText ? props.additionalItemsDisplayText : null}
+                </Row>
+                {
+                    selectedAdditionalItems.map(item => {
+                        return (
+                            renderAdditionalItem(item)
+                        )
+                    })
+                }
+            </Column>
+        )
+    };
 
     if (!formItems) {
         return null;
@@ -36,51 +93,25 @@ function FormComponent(props) {
             >
                 {formItems ? formItems.map(item => {
                     return (
-                        <Column flex={1}>
-                            <Row style={{ margin: '10px' }} key={item.text ? item.text : null}>
-                                <Column flex={.5} style={{ marginRight: '10px' }}>
-                                    {item.text}
-                                </Column>
-                                <Column flex={.5} style={{ marginRight: '10px' }}>
-                                    <input
-                                        defaultValue={item.value ? item.value : null}
-                                        type={item.type ? item.type : null}
-                                        style={{}}
-                                        {...register(item.register)} />
-                                </Column>
-                            </Row>
-                            {item.error ? <Row style={{ margin: '10px' }} key={item.errorDisplayMessage}>
-                                <Column flex={1} style={{ marginRight: '10px', color: 'red' }}>
-                                    {item.errorDisplayMessage}
-                                </Column>
-                            </Row> : null}
-                        </Column>
+                        item.register === 'additionalInformation' ? renderAdditionalItems() : renderFormItem(item)
                     )
                 }) : null}
-                {
+                {/* {
                     selectedAdditionalItems ?
-                        <Row horizontal="spaced" style={{ margin: '10px' }} wrap>
-                            {selectedAdditionalItems.map(item => {
-                                return (
-                                    <Column
-                                        style={{ minWidth: 200 }}
-                                        horizontal="left"
-                                        key={item.name ? item.name : null}
-                                    >
-                                        <label>
-                                            <input
-                                                type="checkbox"
-                                                checked={item.checked}
-                                                onClick={() => props.handleAdditionalItems(item)}
-                                            />
-                                            {item.name}
-                                        </label>
-                                    </Column>
-                                )
-                            })}
-                        </Row>
+                        <Column >
+                            <Row horizontal="spaced" style={{ margin: '10px' }}>
+                                {props.additionalItemsDisplayText ? props.additionalItemsDisplayText : null}
+                            </Row>
+                            {
+                                selectedAdditionalItems.map(item => {
+                                    return (
+                                        renderAdditionalItem(item)
+                                    )
+                                })
+                            }
+                        </Column>
                         : null
-                }
+                } */}
                 {props.error ?
                     <Row vertical='center' horizontal='center' style={{ color: 'red', margin: '10px' }}>
                         {props.error}
