@@ -61,7 +61,7 @@ function FormComponent(props) {
         )
     };
 
-    const renderAdditionalItems = (items) => {
+    const renderAdditionalItems = () => {
         return (
             <Column >
                 <Row horizontal="spaced" style={{ margin: '10px' }}>
@@ -96,22 +96,6 @@ function FormComponent(props) {
                         item.register === 'additionalInformation' ? renderAdditionalItems() : renderFormItem(item)
                     )
                 }) : null}
-                {/* {
-                    selectedAdditionalItems ?
-                        <Column >
-                            <Row horizontal="spaced" style={{ margin: '10px' }}>
-                                {props.additionalItemsDisplayText ? props.additionalItemsDisplayText : null}
-                            </Row>
-                            {
-                                selectedAdditionalItems.map(item => {
-                                    return (
-                                        renderAdditionalItem(item)
-                                    )
-                                })
-                            }
-                        </Column>
-                        : null
-                } */}
                 {props.error ?
                     <Row vertical='center' horizontal='center' style={{ color: 'red', margin: '10px' }}>
                         {props.error}

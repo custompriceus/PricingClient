@@ -5,11 +5,11 @@ function PricingResultsRowComponent(props) {
     return (
         <Column>
             <Row style={props.style ? { margin: '10px', ...props.style } : { margin: '10px' }}>
-                <Column flex={0.5}>
+                <Column flex={0.7}>
                     {props.text}
                     {props.hideColon ? null : ':'}
                 </Column>
-                <Column flex={0.5}>
+                <Column flex={0.3}>
                     {props.value ? props.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : props.hideValue ? null : 0}
                 </Column>
             </Row>
