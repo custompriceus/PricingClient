@@ -6,13 +6,14 @@ import * as apiServices from '../../resources/api';
 import FormComponent from 'components/FormComponent';
 import PricingResultsRowComponent from 'components/PricingResultsRowComponent';
 import { validateInputs } from '../../resources/utilities';
+import { getAdjustedFormWithErrors } from '../../resources/utilities';
 
 function EmbroideryPricingComponent() {
     const { actions, state } = useContext(StoreContext);
-    const [defaultEmbroideryPricingForm, setDefaultEmbroideryPricingForm] = useState([]);
-    const [embroideryPricingForm, setEmbroideryPricingForm] = useState([]);
-    const [defaultEmbroideryPricingResults, setDefaultEmbroideryPricingResults] = useState([]);
-    const [embroideryPricingResults, setEmbroideryPricingResults] = useState([]);
+    const [defaultEmbroideryPricingForm, setDefaultEmbroideryPricingForm] = useState();
+    const [embroideryPricingForm, setEmbroideryPricingForm] = useState();
+    const [defaultEmbroideryPricingResults, setDefaultEmbroideryPricingResults] = useState();
+    const [embroideryPricingResults, setEmbroideryPricingResults] = useState();
 
     const fetchData = async () => {
         actions.generalActions.setisbusy()
@@ -44,25 +45,7 @@ function EmbroideryPricingComponent() {
         actions.generalActions.setisbusy();
         const validatedInputs = validateInputs(data, embroideryPricingForm, defaultEmbroideryPricingForm);
         if (validatedInputs.map && validatedInputs.length > 0) {
-            const adjustedFormItems = [];
-            embroideryPricingForm.map(item => {
-                const isItemAnError = validatedInputs.find(function (input) {
-                    return input.key === item.register;
-                });
-                const key = item.register;
-                const defaultFormItem = defaultEmbroideryPricingForm.find(form => form.register === key)
-                adjustedFormItems.push({
-                    text: defaultFormItem.text,
-                    register: defaultFormItem.register,
-                    value: !isItemAnError ? data[key] : item.value,
-                    error: !isItemAnError ? null : true,
-                    errorDisplayMessage: !isItemAnError ? defaultFormItem.errorDisplayMessage : isItemAnError.errorDisplayMessage,
-                    inputValueType: defaultFormItem.inputValueType,
-                    required: defaultFormItem.required,
-                    minValue: defaultFormItem.minValue ? defaultFormItem.minValue : null,
-                    maxValue: defaultFormItem.maxValue ? defaultFormItem.maxValue : null
-                })
-            })
+            const adjustedFormItems = getAdjustedFormWithErrors(embroideryPricingForm, defaultEmbroideryPricingForm, validatedInputs, data)
             setEmbroideryPricingForm(adjustedFormItems);
             setEmbroideryPricingResults(defaultEmbroideryPricingResults)
         }
@@ -84,11 +67,16 @@ function EmbroideryPricingComponent() {
         <Column >
             <Row>
                 <Column flex={.5}>
-                    <FormComponent
-                        handleSubmit={handleSubmit}
-                        formItems={embroideryPricingForm ? embroideryPricingForm : null}
-                        defaultFormItems={defaultEmbroideryPricingForm ? defaultEmbroideryPricingForm : null}
-                    />
+                    {
+                        embroideryPricingForm ?
+                            <FormComponent
+                                handleSubmit={handleSubmit}
+                                formItems={embroideryPricingForm ? embroideryPricingForm : null}
+                                defaultFormItems={defaultEmbroideryPricingForm ? defaultEmbroideryPricingForm : null}
+                            />
+                            : null
+                    }
+
                 </Column>
                 <Column flex={0.5}>
                     {embroideryPricingResults ? embroideryPricingResults.map(result => {

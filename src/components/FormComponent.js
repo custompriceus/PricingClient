@@ -18,7 +18,6 @@ function FormComponent(props) {
 
     useEffect(() => {
         setFormItems(props.formItems)
-        console.log('render form');
         setSelectedAdditionaItems(props.selectedAdditionalItems);
     }, []);
 
