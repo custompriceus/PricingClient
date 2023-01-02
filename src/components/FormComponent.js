@@ -26,10 +26,10 @@ function FormComponent(props) {
         return (
             <Column flex={1}>
                 <Row style={{ margin: '10px' }} key={item.text ? item.text : null}>
-                    <Column flex={.5} style={{ marginRight: '10px' }}>
+                    <Column flex={.7} style={{ marginRight: '10px' }}>
                         {item.text}
                     </Column>
-                    <Column flex={.5} style={{ marginRight: '10px' }}>
+                    <Column flex={.3} style={{ marginRight: '10px' }}>
                         <input
                             defaultValue={item.value ? item.value : null}
                             type={item.type ? item.type : null}
@@ -48,7 +48,7 @@ function FormComponent(props) {
 
     const renderAdditionalItem = (item) => {
         return (
-            <Row Row horizontal="left" style={{ margin: '10px' }} key={item.name ? item.name : null}>
+            <Row horizontal="left" style={{ margin: '10px' }} key={item.name ? item.name : null}>
                 <label>
                     <input
                         type="checkbox"
