@@ -64,7 +64,7 @@ export function getEmbroideryPriceQuote(accessToken, inputs, email) {
     })
 }
 
-export function getShirtPriceQuote(accessToken, inputs, selectedAdditionalItems, email) {
+export function getShirtPriceQuote(accessToken, inputs, selectedAdditionalItems, email, displayToggle) {
     return new Promise((resolve, reject) => {
         axios({
             url: url + "api/user/getShirtPriceQuote",
@@ -75,7 +75,8 @@ export function getShirtPriceQuote(accessToken, inputs, selectedAdditionalItems,
             data: {
                 inputs: inputs,
                 selectedAdditionalItems: selectedAdditionalItems,
-                email: email
+                email: email,
+                displayToggle: displayToggle
             }
         })
             .then(res => {

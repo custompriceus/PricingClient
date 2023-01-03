@@ -91,7 +91,7 @@ export function validateInputs(inputs, shirtPricingForm, defaultShirtPricingForm
     return inputErrors;
 }
 
-export function getAdjustedFormWithErrors(form, defaultForm, validatedInputs, data) {
+export function getAdjustedFormWithErrors(form, defaultForm, validatedInputs, data, displayToggle) {
     const adjustedFormItems = [];
     form.map(item => {
         const isItemAnError = validatedInputs.find(function (input) {
@@ -99,18 +99,26 @@ export function getAdjustedFormWithErrors(form, defaultForm, validatedInputs, da
         });
         const key = item.register;
         const defaultFormItem = defaultForm.find(form => form.register === key)
+
+        let adjustedFormItem = {
+            text: defaultFormItem.text,
+            register: defaultFormItem.register,
+            value: !isItemAnError ? data[key] : item.value,
+            error: !isItemAnError ? null : true,
+            errorDisplayMessage: !isItemAnError ? defaultFormItem.errorDisplayMessage : isItemAnError.errorDisplayMessage,
+            inputValueType: defaultFormItem.inputValueType,
+            required: defaultFormItem.required,
+            minValue: defaultFormItem.minValue ? defaultFormItem.minValue : null,
+            maxValue: defaultFormItem.maxValue ? defaultFormItem.maxValue : null,
+        }
+
+        if (item.toggle) {
+            adjustedFormItem.toggle = true;
+            adjustedFormItem.defaultToggle = displayToggle ? true : false
+        }
+
         adjustedFormItems.push(
-            {
-                text: defaultFormItem.text,
-                register: defaultFormItem.register,
-                value: !isItemAnError ? data[key] : item.value,
-                error: !isItemAnError ? null : true,
-                errorDisplayMessage: !isItemAnError ? defaultFormItem.errorDisplayMessage : isItemAnError.errorDisplayMessage,
-                inputValueType: defaultFormItem.inputValueType,
-                required: defaultFormItem.required,
-                minValue: defaultFormItem.minValue ? defaultFormItem.minValue : null,
-                maxValue: defaultFormItem.maxValue ? defaultFormItem.maxValue : null
-            }
+            adjustedFormItem
         );
     })
 

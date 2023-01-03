@@ -59,7 +59,9 @@ function ShirtPricingComponent() {
     const [selectedAdditionalItems, setSelectedAdditionalItems] = useState();
     const [additionalItemsDisplayText, setAdditionalItemsDisplayText] = useState();
     const [additionalItemsMinShirtQuantity, setAdditionalItemsMinShirtQuantity] = useState();
-
+    const [toggle, setToggle] = useState();
+    const [displayToggle, setDisplayToggle] = useState();
+    const [defaultDisplayToggle, setDefaultDisplayToggle] = useState();
 
     const fetchData = async () => {
         actions.generalActions.setisbusy()
@@ -74,6 +76,11 @@ function ShirtPricingComponent() {
                 setSelectedAdditionalItems(res.data.additionalItems.items);
                 setAdditionalItemsDisplayText(res.data.additionalItems.displayText);
                 setAdditionalItemsMinShirtQuantity(res.data.additionalItems.minShirtQuantity);
+                if (res.data.screenCharge) {
+                    setToggle(true);
+                    setDisplayToggle(res.data.screenCharge.defaultToggle);
+                    setDefaultDisplayToggle(res.data.screenCharge.defaultToggle);
+                }
                 actions.generalActions.resetisbusy();
             })
             .catch(err => {
@@ -94,16 +101,17 @@ function ShirtPricingComponent() {
         setSelectedAdditionalItems(clone)
     };
 
-    const handleSubmit = async (data) => {
+    const handleSubmit = async (data, displayToggleFromForm) => {
         actions.generalActions.setisbusy();
         const validatedInputs = validateInputs(data, shirtPricingForm, defaultShirtPricingForm, additionalItemsMinShirtQuantity, selectedAdditionalItems);
         if (validatedInputs.map && validatedInputs.length > 0) {
-            const adjustedFormItems = getAdjustedFormWithErrors(shirtPricingForm, defaultShirtPricingForm, validatedInputs, data)
+            const adjustedFormItems = getAdjustedFormWithErrors(shirtPricingForm, defaultShirtPricingForm, validatedInputs, data, displayToggleFromForm)
             setShirtPricingForm(adjustedFormItems);
             setShirtPricingResults(defaultShirtPricingResults)
+            setDisplayToggle(displayToggleFromForm)
         }
         else {
-            await apiServices.getShirtPriceQuote(state.generalStates.user.accessToken, data, selectedAdditionalItems, state.generalStates.user.email)
+            await apiServices.getShirtPriceQuote(state.generalStates.user.accessToken, data, selectedAdditionalItems, state.generalStates.user.email, displayToggleFromForm)
                 .then(res => {
                     setShirtPricingResults(res.data);
                     setSelectedAdditionalItems([
@@ -111,9 +119,11 @@ function ShirtPricingComponent() {
                         { name: 'Legs, Sweats, Sleeves', checked: false }
                     ])
                     setShirtPricingForm(defaultShirtPricingForm);
+                    setDisplayToggle(defaultDisplayToggle);
                 })
                 .catch(err => {
                     console.log(err.response)
+                    setDisplayToggle(defaultDisplayToggle);
                 })
         }
         actions.generalActions.resetisbusy();
@@ -135,6 +145,8 @@ function ShirtPricingComponent() {
                                 handleAdditionalItems={handleAdditionalItems}
                                 additionalItemsDisplayText={additionalItemsDisplayText ? additionalItemsDisplayText : null}
                                 formItems={shirtPricingForm ? shirtPricingForm : null}
+                                toggle={toggle}
+                                displayToggle={displayToggle}
                             />
                             : null
                     }

@@ -6,6 +6,8 @@ import AwesomeButtonComponent from '../components/AwesomeButtonComponent';
 function FormComponent(props) {
     const [formItems, setFormItems] = useState();
     const [selectedAdditionalItems, setSelectedAdditionaItems] = useState();
+    const [displayToggle, setDisplayToggle] = useState();
+    const [toggle, setToggle] = useState();
 
     const {
         register,
@@ -17,8 +19,10 @@ function FormComponent(props) {
     });
 
     useEffect(() => {
-        setFormItems(props.formItems)
+        setFormItems(props.formItems);
         setSelectedAdditionaItems(props.selectedAdditionalItems);
+        setToggle(props.toggle);
+        setDisplayToggle(props.displayToggle);
     }, []);
 
     const renderFormItem = (item) => {
@@ -77,6 +81,36 @@ function FormComponent(props) {
         )
     };
 
+    const renderToggleItem = (item) => {
+        return (
+            <Column flex={1}>
+                <Row style={{ margin: '10px', cursor: "pointer" }}
+                    onClick={() => setDisplayToggle(!displayToggle)}
+                >
+                    <span style={{ border: '1px solid', borderRadius: '3px', padding: '5px' }}>Turn Off Screen Charge
+                    </span>
+                </Row>
+                <Row style={{ margin: '10px' }} key={item.text ? item.text : null}>
+                    <Column flex={.7} style={{ marginRight: '10px' }}>
+                        {item.text}
+                    </Column>
+                    <Column flex={.3} style={{ marginRight: '10px' }}>
+                        <input
+                            defaultValue={item.value ? item.value : null}
+                            type={item.type ? item.type : null}
+                            style={{}}
+                            {...register(item.register)} />
+                    </Column>
+                </Row>
+                {item.error ? <Row style={{ margin: '10px' }} key={item.errorDisplayMessage}>
+                    <Column flex={1} style={{ marginRight: '10px', color: 'red' }}>
+                        {item.errorDisplayMessage}
+                    </Column>
+                </Row> : null}
+            </Column>
+        )
+    };
+
     if (!formItems) {
         return null;
     }
@@ -86,13 +120,20 @@ function FormComponent(props) {
             <form
                 onSubmit={
                     handleSubmit(async (data) => {
-                        props.handleSubmit(data);
+                        props.handleSubmit(data, displayToggle);
                         reset();
                     })}
             >
                 {formItems ? formItems.map(item => {
                     return (
-                        item.register === 'additionalInformation' ? renderAdditionalItems() : renderFormItem(item)
+                        item.register === 'additionalInformation' ? renderAdditionalItems() : toggle && item.toggle ?
+                            displayToggle ? renderToggleItem(item) : <Row style={{ margin: '10px', cursor: "pointer" }} onClick={() => setDisplayToggle(!displayToggle)}>
+
+                                <span style={{ border: '1px solid', borderRadius: '3px', padding: '5px' }}>Turn On Screen Charge
+                                </span>
+                            </Row>
+                            :
+                            renderFormItem(item)
                     )
                 }) : null}
                 {props.error ?
@@ -100,11 +141,12 @@ function FormComponent(props) {
                         {props.error}
                     </Row>
                     : null}
-                <Row vertical='center' horizontal='center'>
+                {!props.hideButton ? <Row vertical='center' horizontal='center'>
                     <AwesomeButtonComponent
                         text={props.text ? props.text : 'Get Price Quote'}
                     />
-                </Row>
+                </Row> : null}
+
             </form >
         );
     }
