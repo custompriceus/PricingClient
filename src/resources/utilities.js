@@ -30,97 +30,44 @@ export function formatNumber(number) {
     return (Math.round(newNumber * 100) / 100).toFixed(2)
 }
 
-function validateInput(inputType, input) {
-    switch (inputType) {
-        case ('integer'):
-            return ((input % 1 === 0) && input !== '0' && parseInt(input) > 0) ? true : false
-        case ('float'):
-            return (!isNaN(input) && input !== '0' && parseFloat(input) > 0) ? true : false
-        default:
-            console.log(`Input Type Not Found`);
-            return false;
-    }
-}
-
-function getErrorDisplayMessage(key, value, message) {
-    return (
-        {
-            key: key,
-            value: 'blank',
-            errorDisplayMessage: message
-        }
-    )
-}
-
-export function validateInputs(inputs, shirtPricingForm, defaultShirtPricingForm, minShirtQuantityForAdditionalItems, additionalItems) {
-    const inputErrors = [];
-
-    Object.keys(inputs).forEach(function (key, index) {
-        const inputDetails = shirtPricingForm.find(form => form.register === key);
-        const defaultInputDetails = defaultShirtPricingForm.find(form => form.register === key);
-        if (inputs[key] === '' || inputs[key] === '0') {
-            if (inputDetails.required) {
-                inputErrors.push(getErrorDisplayMessage(key, 'blank', `${defaultInputDetails.errorDisplayMessage} cannot be blank`)
-                )
+export function validateInput(inputType, inputValue, inputName, required) {
+    if ((inputValue === '' || inputValue === 0 || !inputValue)) {
+        if (required === 'true') {
+            return {
+                error: true,
+                message: `${inputName} cannot be blank`
             }
         }
         else {
-            const validInput = validateInput(inputDetails.inputValueType, inputs[key])
-            if (!validInput) {
-                inputErrors.push(getErrorDisplayMessage(key, inputs[key], `${defaultInputDetails.errorDisplayMessage}'${inputs[key]}' is invalid`))
-            }
-            else {
-                if (inputDetails.minValue && inputDetails.minValue > parseFloat(inputs[key])) {
-                    inputErrors.push(getErrorDisplayMessage(key, inputs[key], `${defaultInputDetails.errorDisplayMessage} needs to be greater than ${inputDetails.minValue - 1}`))
-                }
-                else if (inputDetails.maxValue && inputDetails.maxValue < parseFloat(inputs[key])) {
-                    inputErrors.push(getErrorDisplayMessage(key, inputs[key], `${defaultInputDetails.errorDisplayMessage} needs to be less than ${inputDetails.maxValue + 1}`))
-                }
-                if (key === 'quantity' && additionalItems) {
-                    const additionalItemsLength = additionalItems.filter(function (item) {
-                        return item.checked;
-                    }).length
-                    const quantity = parseFloat(inputs[key]);
-                    if (additionalItemsLength > 0 && quantity < minShirtQuantityForAdditionalItems) {
-                        inputErrors.push(getErrorDisplayMessage(key, inputs[key], `Additional Items Require A Min Shirt Order of ${minShirtQuantityForAdditionalItems}`))
-                    }
-                }
+            return {
+                error: false
             }
         }
-    });
-    return inputErrors;
-}
-
-export function getAdjustedFormWithErrors(form, defaultForm, validatedInputs, data, displayToggle) {
-    const adjustedFormItems = [];
-    form.map(item => {
-        const isItemAnError = validatedInputs.find(function (input) {
-            return input.key === item.register;
-        });
-        const key = item.register;
-        const defaultFormItem = defaultForm.find(form => form.register === key)
-
-        let adjustedFormItem = {
-            text: defaultFormItem.text,
-            register: defaultFormItem.register,
-            value: !isItemAnError ? data[key] : item.value,
-            error: !isItemAnError ? null : true,
-            errorDisplayMessage: !isItemAnError ? defaultFormItem.errorDisplayMessage : isItemAnError.errorDisplayMessage,
-            inputValueType: defaultFormItem.inputValueType,
-            required: defaultFormItem.required,
-            minValue: defaultFormItem.minValue ? defaultFormItem.minValue : null,
-            maxValue: defaultFormItem.maxValue ? defaultFormItem.maxValue : null,
-        }
-
-        if (item.toggle) {
-            adjustedFormItem.toggle = true;
-            adjustedFormItem.defaultToggle = displayToggle ? true : false
-        }
-
-        adjustedFormItems.push(
-            adjustedFormItem
-        );
-    })
-
-    return adjustedFormItems;
+    }
+    switch (inputType) {
+        case ('integer'):
+            return ((inputValue % 1 === 0) && parseInt(inputValue) >= 0) ?
+                {
+                    error: false
+                } :
+                {
+                    error: true,
+                    message: `Invalid value '${inputValue}' for ${inputName}`
+                }
+        case ('float'):
+            return (inputValue - 0) == inputValue && ('' + inputValue).trim().length > 0 ?
+                {
+                    error: false
+                } :
+                {
+                    error: true,
+                    message: `Invalid value '${inputValue}' for ${inputName}`
+                }
+        default:
+            console.log(`Input Type Not Found`);
+            return {
+                error: true,
+                message: `Input Type Not Found`
+            }
+    }
 }
