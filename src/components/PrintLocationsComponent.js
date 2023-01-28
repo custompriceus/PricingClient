@@ -59,52 +59,61 @@ function PrintLocationsComponent(props) {
             printLocations.map((printLocation, index) => {
                 return (
                     <>
-                        <Column style={{ border: '1px dotted black', borderRadius: '3px', marginBottom: '10px' }}>
-                            <FormItemComponent
-                                register={printLocation.register}
-                                text={printLocation.text}
-                                dropdown
-                                dropdownOptions={[
-                                    { value: 0, label: '0' },
-                                    { value: 1, label: '1' },
-                                    { value: 2, label: '2' },
-                                    { value: 3, label: '3' },
-                                    { value: 4, label: '4' },
-                                    { value: 5, label: '5' },
-                                    { value: 6, label: '6' },
-                                ]}
-                                handleDropdownChange={handleDropdownChange}
-                                defaultDropdownValue={{ value: '1', label: '1' }}
-                            />
-                            <AdditionalItemsComponent
-                                handleChange={handleAdditionalItemsChange}
-                                register={printLocation.register}
-                                displayText={'Additional Items'}
-                                selectedAdditionalItems={props.selectedAdditionalItems}
-                            />
-                            <Row style={{ margin: '10px' }} key={index} vertical='center' horizontal='space-around'>
+                        <Row>
+                            <Column flex={.05}
+                                style={{ marginTop: '10px', marginBottom: '10px' }}
+                            >
                                 {index + 1 === printLocations.length ?
                                     <>
-                                        <Column
-                                            style={{ border: '1px dotted grey', borderRadius: '3px', cursor: 'pointer', padding: '10px' }}
+                                        <Row
+                                            flex={1}
+                                            style={{ width: '100%', cursor: 'pointer' }}
+                                            vertical='center'
+                                            horizontal='center'
                                             onClick={() => handlePrintLocations(printLocation.register, 'delete', index === 0)}
                                         >
-                                            <FaTrash size='16px'
-                                                disabled={true}
-                                            />
-                                        </Column>
-                                        <Column style={{ border: '1px dotted grey', borderRadius: '3px', cursor: 'pointer', padding: '10px' }}
+                                            <FaTrash size='16px' disabled={true} />
+                                        </Row>
+                                        <Row
+                                            flex={1}
+                                            style={{ width: '100%', cursor: 'pointer' }}
+                                            vertical='center'
+                                            horizontal='center'
                                             onClick={() => handlePrintLocations(printLocation.register, 'add')}
                                         >
                                             <FaPlus size='16px' />
-                                        </Column>
+                                        </Row>
                                     </>
-                                    :
-                                    <Column style={{ padding: '10px' }}>
-                                    </Column>
-                                }
-                            </Row>
-                        </Column>
+                                    : null}
+                            </Column>
+                            <Column flex={0.95}
+                                style={{ border: '1px dotted grey', borderRadius: '3px', padding: '10px', marginLeft: '5px', marginRight: '5px', marginTop: '10px', marginBottom: '10px' }}
+                                vertical='center'
+                            >
+                                <FormItemComponent
+                                    register={printLocation.register}
+                                    text={printLocation.text}
+                                    dropdown
+                                    dropdownOptions={[
+                                        { value: 0, label: '0' },
+                                        { value: 1, label: '1' },
+                                        { value: 2, label: '2' },
+                                        { value: 3, label: '3' },
+                                        { value: 4, label: '4' },
+                                        { value: 5, label: '5' },
+                                        { value: 6, label: '6' },
+                                    ]}
+                                    handleDropdownChange={handleDropdownChange}
+                                    defaultDropdownValue={{ value: '1', label: '1' }}
+                                />
+                                <AdditionalItemsComponent
+                                    handleChange={handleAdditionalItemsChange}
+                                    register={printLocation.register}
+                                    displayText={'Additional Information - Mark if any of the following:'}
+                                    selectedAdditionalItems={props.selectedAdditionalItems}
+                                />
+                            </Column>
+                        </Row>
                     </>
                 )
             })

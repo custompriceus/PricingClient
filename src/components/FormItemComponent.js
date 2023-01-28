@@ -22,21 +22,25 @@ function FormItemComponent(props) {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Column flex={1} style={{ margin: '10px' }} key={props.register} >
+            <Column flex={1}
+                key={props.register} >
                 <Row flex={1}>
-                    <Column flex={.7} vertical='center'>
+                    <Column flex={.8} vertical='center'>
                         {props.text}
                     </Column>
                     {!props.dropdown ?
-                        <Column flex={.3} >
+                        <Column  >
                             <input
+                                style={{ width: '100px' }}
                                 {...register(props.register, {
                                     onChange: (e) => { props.handleChange(e.target.name, e.target.value, props.type) }
                                 }
                                 )} />
                         </Column>
                         :
-                        <Column flex={.3} style={{ cursor: 'pointer', horizontal: 'start', vertical: 'center', marginRight: '45px' }}>
+                        <Column
+                            style={{ cursor: 'pointer', horizontal: 'start', vertical: 'center', width: '100px' }}
+                        >
                             <Select
                                 defaultValue={props.defaultDropdownValue}
                                 onChange={handleDropdownChange}
@@ -46,7 +50,7 @@ function FormItemComponent(props) {
                     }
                 </Row>
                 {props.error ? <Row flex={1}>
-                    <Column flex={.7} style={{ marginRight: '10px', color: 'red' }}>
+                    <Column flex={.85} style={{ marginRight: '10px', color: 'red' }}>
                         {props.error}
                     </Column>
                 </Row> : null}

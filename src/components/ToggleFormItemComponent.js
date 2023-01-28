@@ -14,28 +14,30 @@ function ToggleFormItemComponent(props) {
 
     return (
         <form>
-            <Column flex={1} style={{ margin: '10px' }} key={props.register} >
+            <Column flex={1} key={props.register} >
                 <Row>
-                    <Column flex={.7} >
+                    <Column flex={.8}>
                         <label>
                             <input
                                 type="checkbox"
-                                checked={props.displayScreenCharge}
+                                value={true}
                                 onClick={() => props.handleToggleChange()}
                             />
-                            Include Screen Charge
+                            {props.text}
                         </label>
                     </Column>
-                    <Column flex={.3} >
-                        <input
-                            defaultValue={16}
-                            {...register(props.register, {
-                                onChange: (e) => { props.handleChange(e.target.name, e.target.value, props.type) }
-                            }
-                            )}
-                            disabled={!props.displayScreenCharge ? true : false}
-                        />
-                    </Column>
+                    {!props.displayInput ? null :
+                        <Column style={{ width: '100px' }}>
+                            <input
+                                defaultValue={props.defaultValue}
+                                {...register(props.register, {
+                                    onChange: (e) => { props.handleChange(e.target.name, e.target.value, props.type) }
+                                }
+                                )}
+                                disabled={!props.checked ? true : false}
+                            />
+                        </Column>
+                    }
                 </Row>
             </Column>
         </form >

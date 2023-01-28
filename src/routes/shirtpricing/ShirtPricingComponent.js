@@ -62,23 +62,23 @@ function ShirtPricingComponent() {
     const [quantity, setQuantity] = useState();
     const [quantityError, setQuantityError] = useState();
     const [defaultPrintLocations, setDefaultPrintLocations] = useState([{
-        text: "Print Location 1: Amt of colors",
+        text: "Print Location 1 - Amt of colors:",
         value: 1,
         style: null,
         register: 'printSide1Colors',
         required: false,
-        errorDisplayMessage: 'Print location 1: Amt of colors ',
+        errorDisplayMessage: 'Print location 1 - Amt of colors: ',
         inputValueType: 'integer',
         maxValue: 6,
         sortValue: 1
     }]);
     const [printLocations, setPrintLocations] = useState([{
-        text: "Print Location 1: Amt of colors",
+        text: "Print Location 1 - Amt of colors:",
         value: 1,
         style: null,
         register: 'printSide1Colors',
         required: false,
-        errorDisplayMessage: 'Print location 1: Amt of colors ',
+        errorDisplayMessage: 'Print location 1 - Amt of colors: ',
         inputValueType: 'integer',
         maxValue: 6,
         sortValue: 1
@@ -93,12 +93,16 @@ function ShirtPricingComponent() {
     const [displayScreenCharge, setDisplayScreenCharge] = useState(false);
     const [screenCharge, setScreenCharge] = useState(16);
     const [screenChargeError, setScreenChargeError] = useState();
+    const [displayScreenChargeResults, setDisplayScreenChargeResults] = useState();
+    const [canToggleScreenChargeResults, setCanToggleScreenChargeResults] = useState();
+    const [resultWithScreenCharges, setResultWithScreenCharges] = useState();
+    const [resultWithOutScreenCharges, setResultWithOutScreenCharges] = useState();
 
     const fetchData = async () => {
         actions.generalActions.setisbusy()
         await apiServices.getShirtPricingDisplay(state.generalStates.user.accessToken)
             .then(res => {
-                setShirtPricingResults(res.data.results);
+                setShirtPricingResults(res.data.resultWithOutScreenCharges);
                 setSelectedAdditionalItems(res.data.additionalItems.additionalItems);
                 setAdditionalItemsMinShirtQuantity(res.data.additionalItems.minShirtQuantity);
                 actions.generalActions.resetisbusy();
@@ -263,7 +267,20 @@ function ShirtPricingComponent() {
             actions.generalActions.setisbusy();
             await apiServices.getShirtPriceQuote(state.generalStates.user.accessToken, data)
                 .then(res => {
-                    setShirtPricingResults(res.data);
+                    if (res.data.screenCharge) {
+                        setShirtPricingResults(res.data.resultWithScreenCharges);
+                        setResultWithScreenCharges(res.data.resultWithScreenCharges);
+                        setResultWithOutScreenCharges(res.data.resultWithOutScreenCharges);
+                        setCanToggleScreenChargeResults(true);
+                        setDisplayScreenChargeResults(true);
+                    }
+                    else {
+                        setShirtPricingResults(res.data.resultWithOutScreenCharges);
+                        setResultWithScreenCharges();
+                        setResultWithOutScreenCharges(res.data.resultWithOutScreenCharges);
+                        setCanToggleScreenChargeResults(false);
+                        setDisplayScreenChargeResults(false);
+                    }
                     resetAll();
                 })
                 .catch(err => {
@@ -283,6 +300,16 @@ function ShirtPricingComponent() {
         setDisplayScreenCharge(!displayScreenCharge);
     }
 
+    const handleDisplayScreenChargeToggleChange = () => {
+        if (displayScreenChargeResults) {
+            setShirtPricingResults(resultWithOutScreenCharges);
+        }
+        else {
+            setShirtPricingResults(resultWithScreenCharges);
+        }
+        setDisplayScreenChargeResults(!displayScreenChargeResults);
+    }
+
     const addPrintLocation = (printLocation) => {
         const newPrintLocations = [...printLocations, printLocation];
         setPrintLocations(newPrintLocations);
@@ -294,16 +321,56 @@ function ShirtPricingComponent() {
         setPrintLocations(newPrintLocations);
     }
 
+
+    const renderPricingResults = () => {
+        return (
+            <>
+                {canToggleScreenChargeResults ?
+                    <Column style={{ margin: '10px' }}>
+                        <ToggleFormItemComponent
+                            handleChange={handleChange}
+                            handleToggleChange={handleDisplayScreenChargeToggleChange}
+                            checked={!displayScreenChargeResults}
+                            displayInput={false}
+                            text={'Exclude Screen Charge'}
+                        />
+                    </Column>
+                    : null}
+                {shirtPricingResults.map(result => {
+                    return (
+                        <PricingResultsRowComponent
+                            text={result.text}
+                            value={result.value}
+                            style={result.style}
+                            additionalItems={result.additionalItems}
+                            costDescription={result.costDescription}
+                        />
+                    )
+                })}
+            </>
+        )
+    }
+
     return (
         <Row>
             <Column flex={.5}>
-                <FormItemComponent
-                    handleChange={handleChange}
-                    register={'quantity'}
-                    type={'quantity'}
-                    text={'Quantity'}
-                    error={quantityError ? quantityError : null}
-                />
+                <Row>
+                    <Column flex={0.05}>
+
+                    </Column>
+                    <Column flex={.95}
+                        style={{ marginLeft: '10px', marginRight: '10px', marginBottom: '10px' }}
+                        vertical='center'
+                    >
+                        <FormItemComponent
+                            handleChange={handleChange}
+                            register={'quantity'}
+                            type={'quantity'}
+                            text={'Quantity:'}
+                            error={quantityError ? quantityError : null}
+                        />
+                    </Column>
+                </Row>
                 <PrintLocationsComponent
                     handleChange={handleChange}
                     handleAdditionalItemsChange={handleAdditionalItemsChange}
@@ -313,58 +380,98 @@ function ShirtPricingComponent() {
                     removePrintLocation={removePrintLocation}
                     handleDropdownChange={handleDropdownChange}
                 />
-                <FormItemComponent
-                    handleChange={handleChange}
-                    register={'jerseyNumberSides'}
-                    type={'jerseyNumberSides'}
-                    error={jerseyNumberSidesError ? jerseyNumberSidesError : null}
-                    text={'Optional: Jersey Number Sides'}
-                />
-                <FormItemComponent
-                    handleChange={handleChange}
-                    register={'shirtCost'}
-                    type={'shirtCost'}
-                    error={shirtCostError ? shirtCostError : null}
-                    text={'Shirt Cost'}
-                />
-                <FormItemComponent
-                    handleChange={handleChange}
-                    register={'markUp'}
-                    type={'markUp'}
-                    error={markUpError ? markUpError : null}
-                    text={'Mark Up'}
-                />
-                <ToggleFormItemComponent
-                    handleChange={handleChange}
-                    handleToggleChange={handleToggleChange}
-                    displayScreenCharge={displayScreenCharge}
-                    register={'screenCharge'}
-                    type={'screenCharge'}
-                    error={screenChargeError ? screenChargeError : null}
-                    text={'Screen Charge'}
-                />
-                <Column flex={1} style={{ margin: '10px' }}>
-                    <AwesomeButtonComponent
-                        text={'Get Price Quote'}
-                        size={'large'}
-                        type='secondary'
-                        onPress={async () => { handleSubmit() }}
-                    />
-                </Column>
+                <Row>
+                    <Column flex={0.05}>
+
+                    </Column>
+                    <Column flex={.95}
+                        style={{ marginLeft: '10px', marginRight: '10px', marginBottom: '10px' }}
+                        vertical='center'
+                    >
+                        <FormItemComponent
+                            handleChange={handleChange}
+                            register={'jerseyNumberSides'}
+                            type={'jerseyNumberSides'}
+                            error={jerseyNumberSidesError ? jerseyNumberSidesError : null}
+                            text={'Optional: If adding numbers, how many sides?'}
+                        />
+                    </Column>
+                </Row>
+                <Row>
+                    <Column flex={0.05}>
+
+                    </Column>
+                    <Column flex={.95}
+                        style={{ marginLeft: '10px', marginRight: '10px', marginBottom: '10px' }}
+                        vertical='center'
+                    >
+                        <FormItemComponent
+                            handleChange={handleChange}
+                            register={'shirtCost'}
+                            type={'shirtCost'}
+                            error={shirtCostError ? shirtCostError : null}
+                            text={'Shirt Cost (1.5 for $1.50, 2.00 for $2.00, etc.)'}
+                        />
+                    </Column>
+                </Row>
+                <Row>
+                    <Column flex={0.05}>
+
+                    </Column>
+                    <Column flex={.95}
+                        style={{ marginLeft: '10px', marginRight: '10px', marginBottom: '10px' }}
+                        vertical='center'
+                    >
+                        <FormItemComponent
+                            handleChange={handleChange}
+                            register={'markUp'}
+                            type={'markUp'}
+                            error={markUpError ? markUpError : null}
+                            text={'Mark Up (1.5 for $1.50, 2.00 for $2.00, etc.)'}
+                        />
+                    </Column>
+                </Row>
+                <Row>
+                    <Column flex={0.05}>
+
+                    </Column>
+                    <Column flex={.95}
+                        style={{ marginLeft: '10px', marginRight: '10px', marginBottom: '10px' }}
+                        vertical='center'
+                    >
+                        <ToggleFormItemComponent
+                            handleChange={handleChange}
+                            handleToggleChange={handleToggleChange}
+                            checked={displayScreenCharge}
+                            register={'screenCharge'}
+                            type={'screenCharge'}
+                            error={screenChargeError ? screenChargeError : null}
+                            text={'Include Screen Charge'}
+                            defaultValue={16}
+                            displayInput={true}
+                        />
+                    </Column>
+                </Row>
+                <Row>
+                    <Column flex={0.05}>
+
+                    </Column>
+                    <Column flex={.95}
+                        style={{ marginLeft: '10px', marginRight: '10px', marginBottom: '10px' }}
+                        vertical='center'
+                    >
+                        <AwesomeButtonComponent
+                            text={'Get Price Quote'}
+                            size={'large'}
+                            type='secondary'
+                            onPress={async () => { handleSubmit() }}
+                        />
+                    </Column>
+                </Row>
             </Column >
             <Column flex={0.5}>
                 {
-                    shirtPricingResults ? shirtPricingResults.map(result => {
-                        return (
-                            <PricingResultsRowComponent
-                                text={result.text}
-                                value={result.value}
-                                style={result.style}
-                                additionalItems={result.additionalItems}
-                                costDescription={result.costDescription}
-                            />
-                        )
-                    })
+                    shirtPricingResults ? renderPricingResults()
                         : null
                 }
             </Column>
