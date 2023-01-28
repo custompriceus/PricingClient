@@ -330,9 +330,10 @@ function ShirtPricingComponent() {
                         <ToggleFormItemComponent
                             handleChange={handleChange}
                             handleToggleChange={handleDisplayScreenChargeToggleChange}
-                            checked={!displayScreenChargeResults}
+                            checked={displayScreenChargeResults}
                             displayInput={false}
-                            text={'Exclude Screen Charge'}
+                            defaultChecked={true}
+                            text={'Include Screen Charge'}
                         />
                     </Column>
                     : null}

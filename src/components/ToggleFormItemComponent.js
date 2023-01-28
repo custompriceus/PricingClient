@@ -20,7 +20,7 @@ function ToggleFormItemComponent(props) {
                         <label style={{ cursor: 'pointer' }}>
                             <input
                                 type="checkbox"
-                                value={true}
+                                defaultChecked={props.defaultChecked}
                                 onClick={() => props.handleToggleChange()}
                                 style={{ cursor: 'pointer' }}
                             />
