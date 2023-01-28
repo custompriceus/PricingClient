@@ -4,9 +4,10 @@ import { Column, Row } from 'simple-flexbox';
 function AdditionalItemsComponent(props) {
     const renderAdditionalItem = (item) => {
         return (
-            <label>
+            <label style={{ cursor: 'pointer' }}>
                 <input
                     type="checkbox"
+                    style={{ cursor: 'pointer' }}
                     onClick={() => props.handleChange(props.register, item.name)}
                 />
                 {item.name}

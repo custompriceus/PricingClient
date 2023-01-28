@@ -14,14 +14,15 @@ function ToggleFormItemComponent(props) {
 
     return (
         <form>
-            <Column flex={1} key={props.register} >
-                <Row>
-                    <Column flex={.8}>
-                        <label>
+            <Column flex={1} key={props.register}>
+                <Row >
+                    <Column flex={.8} >
+                        <label style={{ cursor: 'pointer' }}>
                             <input
                                 type="checkbox"
                                 value={true}
                                 onClick={() => props.handleToggleChange()}
+                                style={{ cursor: 'pointer' }}
                             />
                             {props.text}
                         </label>
