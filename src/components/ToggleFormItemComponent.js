@@ -6,14 +6,17 @@ function ToggleFormItemComponent(props) {
     const {
         register,
         formState: { errors },
-        handleSubmit,
         reset
     } = useForm({
         mode: "onBlur",
     });
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+    }
+
     return (
-        <form>
+        <form onSubmit={handleSubmit}>
             <Column flex={1} key={props.register}>
                 <Row >
                     <Column flex={.8} >
