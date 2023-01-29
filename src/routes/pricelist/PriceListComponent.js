@@ -122,10 +122,13 @@ function PriceListComponent() {
                 <table style={{ width: '100%' }}>
                     <caption>
                         Light And Dark Shirt Pricing
-                        <FaEdit size='16px' onClick={() => {
-                            setDisplayEditLightDarkPricing(!displayEditLightDarkPricing)
-                        }}
-                        />
+                        {state.generalStates.user.email === 'dedtees@gmail.com' || state.generalStates.user.email === 'jweinst4@gmail.com' ?
+                            <FaEdit size='16px' onClick={() => {
+                                setDisplayEditLightDarkPricing(!displayEditLightDarkPricing)
+                            }} />
+                            :
+                            null
+                        }
                     </caption>
                     <tr>
                         <td></td>
@@ -188,9 +191,13 @@ function PriceListComponent() {
                 <table style={{ width: '100%' }}>
                     <caption>
                         Embroidery Pricing
-                        <FaEdit size='16px' onClick={() => {
-                            setDisplayEditEmbroideryPricing(!displayEditEmbroideryPricing)
-                        }} />
+                        {state.generalStates.user.email === 'dedtees@gmail.com' || state.generalStates.user.email === 'jweinst4@gmail.com' ?
+                            <FaEdit size='16px' onClick={() => {
+                                setDisplayEditEmbroideryPricing(!displayEditEmbroideryPricing)
+                            }} />
+                            :
+                            null
+                        }
                     </caption>
                     <tr >
                         <td ></td>
