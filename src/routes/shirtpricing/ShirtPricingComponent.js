@@ -428,7 +428,7 @@ function ShirtPricingComponent() {
                             register={'markUp'}
                             type={'markUp'}
                             error={markUpError ? markUpError : null}
-                            text={'Mark Up (1.5 for $1.50, 2.00 for $2.00, etc.)'}
+                            text={'Mark Up (50 for 50%, 100 for 100%, etc.)'}
                         />
                     </Column>
                 </Row>
