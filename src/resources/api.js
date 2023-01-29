@@ -205,7 +205,7 @@ export function login(token, type, sub, email) {
             data.email = email
         }
         axios({
-            url: url + "api/auth/login",
+            url: url + "api/auth/logintest",
             method: "POST",
             data: data,
         })
