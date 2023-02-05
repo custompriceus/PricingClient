@@ -87,7 +87,7 @@ function EmbroideryPricingComponent() {
         actions.generalActions.setisbusy()
         await apiServices.getEmbroideryPricingDisplay(state.generalStates.user.accessToken)
             .then(res => {
-                setEmbroideryPricingResults(res.data.resultWithOutScreenCharges);
+                setEmbroideryPricingResults(res.data.results);
                 actions.generalActions.resetisbusy();
             })
             .catch(err => {

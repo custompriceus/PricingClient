@@ -86,7 +86,6 @@ function ShirtPricingComponent() {
     //get these deefault vaalues from backend
     const [additionalItems, setAdditionalItems] = useState([]);
     const [jerseyNumberSides, setJerseyNumberSides] = useState();
-    const [jerseyNumberSidesError, setJerseyNumberSidesError] = useState();
     const [shirtCost, setShirtCost] = useState();
     const [shirtCostError, setShirtCostError] = useState();
     const [markUp, setMarkUp] = useState();
@@ -103,7 +102,7 @@ function ShirtPricingComponent() {
         actions.generalActions.setisbusy()
         await apiServices.getShirtPricingDisplay(state.generalStates.user.accessToken)
             .then(res => {
-                setShirtPricingResults(res.data.resultWithOutScreenCharges);
+                setShirtPricingResults(res.data.results);
                 setSelectedAdditionalItems(res.data.additionalItems.additionalItems);
                 setAdditionalItemsMinShirtQuantity(res.data.additionalItems.minShirtQuantity);
                 actions.generalActions.resetisbusy();
@@ -148,9 +147,6 @@ function ShirtPricingComponent() {
             case "printLocation":
                 const newData = upsert(printLocations, inputName, value);
                 setPrintLocations(newData);
-                return;
-            case "jerseyNumberSides":
-                setJerseyNumberSides(value);
                 return;
             case "shirtCost":
                 setShirtCost(value);
@@ -203,15 +199,6 @@ function ShirtPricingComponent() {
         }
         else if (quantityError) {
             setQuantityError(null)
-        }
-
-        const isJerseyNumberSidesValidated = validateInput('integer', jerseyNumberSides, 'Jersey Number Sides');
-        if (isJerseyNumberSidesValidated.error) {
-            setJerseyNumberSidesError(isJerseyNumberSidesValidated.message);
-            errors.push('isJerseyNumberSidesValidated');
-        }
-        else if (jerseyNumberSidesError) {
-            setJerseyNumberSidesError(null)
         }
 
         const isShirtCostValidated = validateInput('float', shirtCost, 'Shirt Cost: ', 'true');
@@ -298,6 +285,10 @@ function ShirtPricingComponent() {
         const newDataHere = upsert(newData, inputName, value);
         //cheeck if i can just usse ...printlocations instead of newdata
         setPrintLocations(newDataHere);
+    }
+
+    const handleJerseySidesDropdownChange = (value) => {
+        setJerseyNumberSides(value);
     }
 
     const handleToggleChange = () => {
@@ -408,13 +399,18 @@ function ShirtPricingComponent() {
                         vertical='center'
                     >
                         <FormItemComponent
-                            handleChange={handleChange}
                             register={'jerseyNumberSides'}
                             type={'jerseyNumberSides'}
-                            error={jerseyNumberSidesError ? jerseyNumberSidesError : null}
                             text={'Optional: If adding numbers, how many sides?'}
+                            dropdown={true}
+                            dropdownOptions={[
+                                { value: 0, label: '0' },
+                                { value: 1, label: '1' },
+                                { value: 2, label: '2' },
+                            ]}
+                            handleDropdownChange={handleJerseySidesDropdownChange}
+                            defaultDropdownValue={{ value: 0, label: '0' }}
                         />
-                        //make this a dropdown componeent with just 0,1,2
                     </Column>
                 </Row>
                 <Row>
