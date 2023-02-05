@@ -277,7 +277,7 @@ function EmbroideryPricingComponent() {
                     handleChange={handleChange}
                     defaultLocations={defaultStitchLocations}
                     addLocation={addStitchLocation}
-                    removeStitchLocation={removeStitchLocation}
+                    removeLocation={removeStitchLocation}
                     textPrefix={'Stitch Location '}
                     textSuffix={'Amt of stitches'}
                     registerPrefix={'stitchLocation'}

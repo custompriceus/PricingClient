@@ -381,7 +381,7 @@ function ShirtPricingComponent() {
                     selectedAdditionalItems={selectedAdditionalItems}
                     defaultLocations={defaultPrintLocations}
                     addLocation={addPrintLocation}
-                    removePrintLocation={removePrintLocation}
+                    removeLocation={removePrintLocation}
                     handleDropdownChange={handleDropdownChange}
                     textPrefix={'Print Location '}
                     textSuffix={'Amt of colors'}
