@@ -23,7 +23,7 @@ function LocationsComponent(props) {
             const newLocationValue = currentValue + 1;
             const newLocationObject = {
                 text: `${props.textPrefix} ${newLocationValue} - ${props.textSuffix}:`,
-                value: 1,
+                value: props.newLocationDefaultValue,
                 style: null,
                 register: `${props.registerPrefix}${newLocationValue}${props.registerSuffix}`,
                 required: false,
@@ -101,7 +101,7 @@ function LocationsComponent(props) {
                                     dropdownOptions={props.dropdownOptions ? props.dropdownOptions : null}
                                     handleDropdownChange={props.handleDropdownChange ? handleDropdownChange : null}
                                     handleChange={props.handleChange ? handleChange : null}
-                                    defaultDropdownValue={{ value: '1', label: '1' }}
+                                    defaultDropdownValue={{ value: props.newLocationDefaultValue, label: props.newLocationDefaultValue }}
                                 />
                                 {props.selectedAdditionalItems ? <AdditionalItemsComponent
                                     handleChange={handleAdditionalItemsChange}
@@ -121,7 +121,23 @@ function LocationsComponent(props) {
     return (
         <Column>
             {locations && locations.map && locations.length > 0 ?
-                renderLocations()
+                <>
+                    {renderLocations()}
+                    {props.error ?
+                        <>
+                            <Column flex={.05}>
+                            </Column>
+                            <Column flex={0.95}
+                                style={{ marginTop: '10px', marginBottom: '10px', color: 'red' }}
+                                vertical='center'
+                                horizontal='center'
+                            >
+                                {props.error}
+
+                            </Column>
+                        </>
+                        : null}
+                </>
                 :
                 null
             }

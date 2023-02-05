@@ -81,6 +81,7 @@ function EmbroideryPricingComponent() {
     const [shirtCostError, setShirtCostError] = useState();
     const [markUp, setMarkUp] = useState();
     const [markUpError, setMarkUpError] = useState();
+    const [locationsError, setLocationsError] = useState();
 
     const fetchData = async () => {
         actions.generalActions.setisbusy()
@@ -157,6 +158,20 @@ function EmbroideryPricingComponent() {
         }
         else if (quantityError) {
             setQuantityError(null)
+        }
+
+        let locationErrors = 0;
+        stitchLocations.map(location => {
+            const isLocationValidated = validateInput(location.inputValueType, location.value, location.text);
+            console.log('is valid', isLocationValidated)
+            if (isLocationValidated.error) {
+                errors.push('isShirtCostValidated');
+                locationErrors++;
+                setLocationsError('One Or More Stitch Locations Are Invalid');
+            }
+        })
+        if (locationErrors === 0) {
+            setLocationsError();
         }
 
         const isShirtCostValidated = validateInput('float', shirtCost, 'Shirt Cost: ', 'true');
@@ -268,6 +283,8 @@ function EmbroideryPricingComponent() {
                     registerPrefix={'stitchLocation'}
                     registerSuffix={'Stitches'}
                     locationsInputType={'stitchLocations'}
+                    error={locationsError ? locationsError : null}
+                    newLocationDefaultValue={0}
                 />
                 <Row>
                     <Column flex={0.05}>

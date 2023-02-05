@@ -397,6 +397,7 @@ function ShirtPricingComponent() {
                         { value: 5, label: '5' },
                         { value: 6, label: '6' },
                     ]}
+                    newLocationDefaultValue={1}
                 />
                 <Row>
                     <Column flex={0.05}>
