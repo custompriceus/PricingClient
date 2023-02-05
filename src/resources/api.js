@@ -40,7 +40,27 @@ export function getShirtPricingDisplay(accessToken) {
     })
 }
 
-export function getEmbroideryPriceQuote(accessToken, inputs, email) {
+export function getEmbroideryPricingDisplay(accessToken) {
+    return new Promise((resolve, reject) => {
+        axios({
+            url: url + "api/user/getEmbroideryPricingDisplay",
+            method: "POST",
+            headers: {
+                "x-access-token": accessToken
+            }
+        })
+            .then(res => {
+                resolve(res)
+            })
+            .catch(err => {
+                console.log('error');
+                console.log(err)
+                reject(err)
+            })
+    })
+}
+
+export function getEmbroideryPriceQuote(accessToken, data) {
     return new Promise((resolve, reject) => {
         axios({
             url: url + "api/user/getEmbroideryPriceQuote",
@@ -48,10 +68,7 @@ export function getEmbroideryPriceQuote(accessToken, inputs, email) {
             headers: {
                 "x-access-token": accessToken
             },
-            data: {
-                inputs: inputs,
-                email: email
-            }
+            data: data
         })
             .then(res => {
                 resolve(res)

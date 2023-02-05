@@ -7,7 +7,7 @@ const renderAdditionalItems = (additionalItems, costDescription) => {
     return (
         <Column>
             <Collapsible trigger={
-                <Row style={{ margin: '10px', flex: 1, fontSize: '14px' }} vertical='center' horizontal='center'>
+                <Row style={{ margin: '10px', flex: 1, fontSize: '14px', cursor: 'pointer' }} vertical='center' horizontal='center'>
                     Expand For Detailed Pricing<FaArrowDown size='16px' />
                 </Row>
             }>

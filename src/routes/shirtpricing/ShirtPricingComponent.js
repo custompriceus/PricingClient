@@ -8,7 +8,7 @@ import * as apiServices from '../../resources/api';
 import { validateInput } from '../../resources/utilities';
 import PricingResultsRowComponent from 'components/PricingResultsRowComponent';
 import FormItemComponent from 'components/FormItemComponent';
-import PrintLocationsComponent from 'components/PrintLocationsComponent';
+import LocationsComponent from 'components/LocationsComponent';
 import AwesomeButtonComponent from 'components/AwesomeButtonComponent';
 import ToggleFormItemComponent from 'components/ToggleFormItemComponent';
 
@@ -83,6 +83,7 @@ function ShirtPricingComponent() {
         maxValue: 6,
         sortValue: 1
     }]);
+    //get these deefault vaalues from backend
     const [additionalItems, setAdditionalItems] = useState([]);
     const [jerseyNumberSides, setJerseyNumberSides] = useState();
     const [jerseyNumberSidesError, setJerseyNumberSidesError] = useState();
@@ -122,6 +123,7 @@ function ShirtPricingComponent() {
     }
 
     const upsert = (array, register, value) => {
+        //see if can move upsert to utilities
         const i = array.findIndex(_element => _element.register === register);
         const newItem = {
             register: register,
@@ -129,6 +131,7 @@ function ShirtPricingComponent() {
         };
         if (i > -1) {
             let newData = [...array.slice()]
+            //check is slice is necessary
             newData[i].value = value;
             return newData;
         }
@@ -293,6 +296,7 @@ function ShirtPricingComponent() {
     const handleDropdownChange = (value, inputName) => {
         const newData = [...printLocations];
         const newDataHere = upsert(newData, inputName, value);
+        //cheeck if i can just usse ...printlocations instead of newdata
         setPrintLocations(newDataHere);
     }
 
@@ -315,7 +319,7 @@ function ShirtPricingComponent() {
         setPrintLocations(newPrintLocations);
     }
 
-    const removePrintLocation = (printLocation) => {
+    const removePrintLocation = () => {
         const newPrintLocations = [...printLocations];
         newPrintLocations.pop();
         setPrintLocations(newPrintLocations);
@@ -372,14 +376,27 @@ function ShirtPricingComponent() {
                         />
                     </Column>
                 </Row>
-                <PrintLocationsComponent
-                    handleChange={handleChange}
+                <LocationsComponent
                     handleAdditionalItemsChange={handleAdditionalItemsChange}
                     selectedAdditionalItems={selectedAdditionalItems}
-                    defaultPrintLocations={defaultPrintLocations}
-                    addPrintLocation={addPrintLocation}
+                    defaultLocations={defaultPrintLocations}
+                    addLocation={addPrintLocation}
                     removePrintLocation={removePrintLocation}
                     handleDropdownChange={handleDropdownChange}
+                    textPrefix={'Print Location '}
+                    textSuffix={'Amt of colors'}
+                    registerPrefix={'printSide'}
+                    registerSuffix={'Colors'}
+                    dropdown={true}
+                    dropdownOptions={[
+                        { value: 0, label: '0' },
+                        { value: 1, label: '1' },
+                        { value: 2, label: '2' },
+                        { value: 3, label: '3' },
+                        { value: 4, label: '4' },
+                        { value: 5, label: '5' },
+                        { value: 6, label: '6' },
+                    ]}
                 />
                 <Row>
                     <Column flex={0.05}>
@@ -396,6 +413,7 @@ function ShirtPricingComponent() {
                             error={jerseyNumberSidesError ? jerseyNumberSidesError : null}
                             text={'Optional: If adding numbers, how many sides?'}
                         />
+                        //make this a dropdown componeent with just 0,1,2
                     </Column>
                 </Row>
                 <Row>
