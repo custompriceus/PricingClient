@@ -87,13 +87,14 @@ export function getShirtPriceQuote(data) {
     })
 }
 
-export function postNewLightDarkPrices(newShirtPrices) {
+export function postNewLightDarkPrices(newShirtPrices,password) {
     return new Promise((resolve, reject) => {
         axios({
             url: url + "api/user/submitNewLightDarkPricing",
             method: "POST",
             data: {
-                newPrices: newShirtPrices
+                newPrices: newShirtPrices,
+                password:password
             }
         })
             .then(res => {
@@ -107,13 +108,14 @@ export function postNewLightDarkPrices(newShirtPrices) {
     })
 }
 
-export function postNewEmbroideryPrices(newEmbroideryPrices) {
+export function postNewEmbroideryPrices(newEmbroideryPrices,password) {
     return new Promise((resolve, reject) => {
         axios({
             url: url + "api/user/submitNewEmbroideryPricing",
             method: "POST",
             data: {
-                newPrices: newEmbroideryPrices
+                newPrices: newEmbroideryPrices,
+                password:password
             }
         })
             .then(res => {

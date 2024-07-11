@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import 'react-awesome-button/dist/styles.css';
 import PricingEditInputComponent from 'components/PricingEditInputComponent';
 import AwesomeButtonComponent from 'components/AwesomeButtonComponent';
+import FormItemComponent from 'components/FormItemComponent';
 
 const useStyles = createUseStyles({
 
@@ -59,6 +60,9 @@ function PriceListComponent() {
     const [displayEditEmbroideryPricing, setDisplayEditEmbroideryPricing] = useState(false);
     const [newLightDarkPricing, setNewLightDarkPricing] = useState([]);
     const [newEmbroideryPricing, setNewEmbroideryPricing] = useState([]);
+    const [password, setPassword] = useState();
+    const [passwordError, setPasswordError] = useState(false);
+    const [passwordSaved, setPasswordSaved] = useState(false);
 
     const fetchData = async () => {
         actions.generalActions.setisbusy()
@@ -90,6 +94,16 @@ function PriceListComponent() {
 
     if (state.generalStates.isBusy) {
         return <LoadingComponent loading />
+    }
+
+    const handleChange = (inputName, value, type) => {
+        switch (type) {
+            case "password":
+                setPassword(value);
+                return;
+            default:
+                throw new Error("Unexpected action");
+        }
     }
 
     const handleNewPricing = (props, newPrice) => {
@@ -125,7 +139,7 @@ function PriceListComponent() {
                       
                             <FaEdit size='16px' onClick={() => {
                                 setDisplayEditLightDarkPricing(!displayEditLightDarkPricing)
-                            }} />
+                            }} />                       
                           
                     </caption>
                     <tr>
@@ -169,16 +183,33 @@ function PriceListComponent() {
                 </table >
                 {displayEditLightDarkPricing ?
                     <Row vertical='center' horizontal='center'>
+                         {
+                            passwordSaved ? <Row style={{ color: 'red' }}>Password Saved For Session</Row> :
+                            <FormItemComponent
+                            handleChange={handleChange}
+                            register={'password'}
+                            type={'password'}
+                            text={'Password: '}
+                        />
+                        }
+                        {
+                            passwordError ? <Row style={{ color: 'red' }}>Incorrect Password</Row> : null
+                        }
                         <AwesomeButtonComponent
                             text={'Submit New Pricing'}
                             size={'large'}
                             type='secondary'
                             onPress={async () => {
-                                const response = await apiServices.postNewLightDarkPrices(newLightDarkPricing);
-                                if (response) {
+                                const response = await apiServices.postNewLightDarkPrices(newLightDarkPricing,password);
+                                if (response && response.data && response.data!== 'Wrong Password') {
                                     setNewLightDarkPricing([]);
                                     setDisplayEditLightDarkPricing(false);
+                                    setPasswordError(false);
+                                    setPasswordSaved(true);
                                     fetchData().catch(console.error);
+                                }
+                                else {
+                                    setPasswordError(true);
                                 }
                             }}
                         />
@@ -238,16 +269,33 @@ function PriceListComponent() {
                 </table >
                 {displayEditEmbroideryPricing ?
                     <Row vertical='center' horizontal='center'>
+                        {
+                            passwordSaved ? <Row style={{ color: 'red' }}>Password Saved For Session</Row> :
+                            <FormItemComponent
+                            handleChange={handleChange}
+                            register={'password'}
+                            type={'password'}
+                            text={'Password: '}
+                        />
+                        }
+                        {
+                            passwordError ? <Row style={{ color: 'red' }}>Incorrect Password</Row> : null
+                        }
                         <AwesomeButtonComponent
                             text={'Submit New Pricing'}
                             size={'large'}
                             type='secondary'
                             onPress={async () => {
-                                const response = await apiServices.postNewEmbroideryPrices(newEmbroideryPricing);
-                                if (response) {
+                                const response = await apiServices.postNewEmbroideryPrices(newEmbroideryPricing,password);
+                                if (response && response.data && response.data!== 'Wrong Password') {
                                     setNewEmbroideryPricing([]);
                                     setDisplayEditEmbroideryPricing(false);
+                                    setPasswordError(false);
+                                    setPasswordSaved(true);
                                     fetchData().catch(console.error);
+                                }
+                                else {
+                                    setPasswordError(true);
                                 }
                             }}
                         />
