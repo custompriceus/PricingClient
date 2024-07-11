@@ -255,7 +255,7 @@ function ShirtPricingComponent() {
             }
 
             actions.generalActions.setisbusy();
-            await apiServices.getShirtPriceQuote(state.generalStates.user.accessToken, data)
+            await apiServices.getShirtPriceQuote(data)
                 .then(res => {
                     if (res.data.screenCharge) {
                         setShirtPricingResults(res.data.resultWithScreenCharges);

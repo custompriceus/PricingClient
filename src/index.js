@@ -7,19 +7,19 @@ import Theme from 'resources/theme';
 import Routes from 'routes';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+
 
 
 
 ReactDOM.render(
     <ThemeProvider theme={Theme}>
-        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+   
             <StoreProvider>
                 <Router>
                     <Routes />
                 </Router>
             </StoreProvider>
-        </GoogleOAuthProvider>
+  
     </ThemeProvider>
     ,
     document.getElementById('root')

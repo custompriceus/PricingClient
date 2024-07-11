@@ -63,7 +63,7 @@ function PriceListComponent() {
     const fetchData = async () => {
         actions.generalActions.setisbusy()
 
-        await apiServices.getPricingList(state.generalStates.user.accessToken)
+        await apiServices.getPricingList()
             .then(res => {
                 console.log('new,', res.data)
                 setPrices(res.data)
@@ -122,13 +122,11 @@ function PriceListComponent() {
                 <table style={{ width: '100%' }}>
                     <caption>
                         Light And Dark Shirt Pricing
-                        {state.generalStates.user.email === 'dedtees@gmail.com' || state.generalStates.user.email === 'jweinst4@gmail.com' ?
+                      
                             <FaEdit size='16px' onClick={() => {
                                 setDisplayEditLightDarkPricing(!displayEditLightDarkPricing)
                             }} />
-                            :
-                            null
-                        }
+                          
                     </caption>
                     <tr>
                         <td></td>
@@ -176,7 +174,7 @@ function PriceListComponent() {
                             size={'large'}
                             type='secondary'
                             onPress={async () => {
-                                const response = await apiServices.postNewLightDarkPrices(state.generalStates.user.accessToken, newLightDarkPricing);
+                                const response = await apiServices.postNewLightDarkPrices(newLightDarkPricing);
                                 if (response) {
                                     setNewLightDarkPricing([]);
                                     setDisplayEditLightDarkPricing(false);
@@ -191,13 +189,11 @@ function PriceListComponent() {
                 <table style={{ width: '100%' }}>
                     <caption>
                         Embroidery Pricing
-                        {state.generalStates.user.email === 'dedtees@gmail.com' || state.generalStates.user.email === 'jweinst4@gmail.com' ?
+                       
                             <FaEdit size='16px' onClick={() => {
                                 setDisplayEditEmbroideryPricing(!displayEditEmbroideryPricing)
                             }} />
-                            :
-                            null
-                        }
+                       
                     </caption>
                     <tr >
                         <td ></td>
@@ -247,7 +243,7 @@ function PriceListComponent() {
                             size={'large'}
                             type='secondary'
                             onPress={async () => {
-                                const response = await apiServices.postNewEmbroideryPrices(state.generalStates.user.accessToken, newEmbroideryPricing);
+                                const response = await apiServices.postNewEmbroideryPrices(newEmbroideryPricing);
                                 if (response) {
                                     setNewEmbroideryPricing([]);
                                     setDisplayEditEmbroideryPricing(false);

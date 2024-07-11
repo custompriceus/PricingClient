@@ -85,7 +85,7 @@ function EmbroideryPricingComponent() {
 
     const fetchData = async () => {
         actions.generalActions.setisbusy()
-        await apiServices.getEmbroideryPricingDisplay(state.generalStates.user.accessToken)
+        await apiServices.getEmbroideryPricingDisplay()
             .then(res => {
                 setEmbroideryPricingResults(res.data.results);
                 actions.generalActions.resetisbusy();
@@ -205,12 +205,11 @@ function EmbroideryPricingComponent() {
                 quantity: quantity,
                 locations: stitchLocations,
                 shirtCost: shirtCost,
-                markUp: markUp,
-                email: state.generalStates.user.email
+                markUp: markUp
             }
 
             actions.generalActions.setisbusy();
-            await apiServices.getEmbroideryPriceQuote(state.generalStates.user.accessToken, data)
+            await apiServices.getEmbroideryPriceQuote(data)
                 .then(res => {
                     console.log('data,', res.data.result)
                     setEmbroideryPricingResults(res.data.result);

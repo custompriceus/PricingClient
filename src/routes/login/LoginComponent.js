@@ -1,5 +1,5 @@
 import { StoreContext } from "../../context/store/storeContext";
-import { useGoogleOneTapLogin, useGoogleLogin } from '@react-oauth/google';
+// import { useGoogleOneTapLogin, useGoogleLogin } from '@react-oauth/google';
 import React, { useState, useContext } from 'react';
 import { Column, Row } from 'simple-flexbox';
 import useWindowSize from '../../hooks/useWindowSize';
@@ -34,72 +34,73 @@ function LoginComponent() {
     }
 
     const login = async (token, type, sub, email) => {
-        actions.generalActions.setisbusy()
+        // actions.generalActions.setisbusy()
 
-        await apiServices.login(token, type, sub, email)
-            .then(res => {
-                actions.generalActions.setUser(res.data);
-                actions.generalActions.login()
-                actions.generalActions.resetisbusy()
-            })
-            .catch(err => console.log(err.response))
+        // await apiServices.login(token, type, sub, email)
+        //     .then(res => {
+        //         actions.generalActions.setUser(res.data);
+        //         actions.generalActions.login()
+        //         actions.generalActions.resetisbusy()
+        //     })
+        //     .catch(err => console.log(err.response))
+        console.log('api')
     }
 
-    const googleLogin = useGoogleLogin({
-        onSuccess: async (codeResponse) => {
-            const googleProfile = await apiServices.getGoogleProfileFromBearerToken(codeResponse.access_token);
-            if (googleProfile) {
-                login(codeResponse.access_token, "bearer", googleProfile.data.sub, googleProfile.data.email);
-            }
-            else {
-                console.log('did not get google profile');
-            }
-        },
-        onError: errorResponse => console.log(errorResponse),
-    });
+    // const googleLogin = useGoogleLogin({
+    //     // onSuccess: async (codeResponse) => {
+    //     //     const googleProfile = await apiServices.getGoogleProfileFromBearerToken(codeResponse.access_token);
+    //     //     if (googleProfile) {
+    //     //         login(codeResponse.access_token, "bearer", googleProfile.data.sub, googleProfile.data.email);
+    //     //     }
+    //     //     else {
+    //     //         console.log('did not get google profile');
+    //     //     }
+    //     // },
+    //     // onError: errorResponse => console.log(errorResponse),
+    // });
 
-    useGoogleOneTapLogin({
-        onSuccess: credentialResponse => {
-            login(credentialResponse.credential, "access");
-        },
-        onError: () => {
-            console.log('Login Failed');
-        },
-    });
+    // useGoogleOneTapLogin({
+    //     // onSuccess: credentialResponse => {
+    //     //     login(credentialResponse.credential, "access");
+    //     // },
+    //     // onError: () => {
+    //     //     console.log('Login Failed');
+    //     // },
+    // });
 
     const signInWithEmail = async (data) => {
-        if (data && data.email && data.password) {
-            await apiServices.signInWithEmail(data.email, data.password)
-                .then(res => {
-                    console.log(res);
-                    actions.generalActions.setUser(res.data);
-                    actions.generalActions.login()
-                })
-                .catch(err => handleError(err.response.data))
-        }
-        else {
-            handleError('Please Enter An Email And Password')
-        }
+        // if (data && data.email && data.password) {
+        //     await apiServices.signInWithEmail(data.email, data.password)
+        //         .then(res => {
+        //             console.log(res);
+        //             actions.generalActions.setUser(res.data);
+        //             actions.generalActions.login()
+        //         })
+        //         .catch(err => handleError(err.response.data))
+        // }
+        // else {
+        //     handleError('Please Enter An Email And Password')
+        // }
     }
 
     const signUpWithEmail = async (data) => {
-        if (data && data.password && data.reTypePassword) {
-            if (data.password === data.reTypePassword) {
-                await apiServices.signUpWithEmail(data.email, data.password)
-                    .then(res => {
-                        console.log(res);
-                        actions.generalActions.setUser(res.data);
-                        actions.generalActions.login()
-                    })
-                    .catch(err => handleError(err.response.data))
-            }
-            else {
-                handleError(`Passwords Don't Match`)
-            }
-        }
-        else {
-            handleError(`Please Make Sure All Inputs Were Entered`)
-        }
+        // if (data && data.password && data.reTypePassword) {
+        //     if (data.password === data.reTypePassword) {
+        //         await apiServices.signUpWithEmail(data.email, data.password)
+        //             .then(res => {
+        //                 console.log(res);
+        //                 actions.generalActions.setUser(res.data);
+        //                 actions.generalActions.login()
+        //             })
+        //             .catch(err => handleError(err.response.data))
+        //     }
+        //     else {
+        //         handleError(`Passwords Don't Match`)
+        //     }
+        // }
+        // else {
+        //     handleError(`Please Make Sure All Inputs Were Entered`)
+        // }
     }
 
     const handleDisplayToggle = async (currentDisplay) => {
@@ -158,11 +159,11 @@ function LoginComponent() {
                                 Sign Up With Email
                             </Row> : null}
             </Row>
-            {showSignInWithGoogle ? <Row style={{ cursor: 'pointer', marginTop: '30px' }} onClick={() => {
+            {/* {showSignInWithGoogle ? <Row style={{ cursor: 'pointer', marginTop: '30px' }} onClick={() => {
                 googleLogin()
             }}><img src={require('../../assets/icons/google_signin_buttons/web/2x/btn_google_signin_dark_pressed_web@2x.png')} />
-            </Row> : null}
-            {showSignUpWithEmail ?
+            </Row> : null} */}
+            {/* {showSignUpWithEmail ?
                 <FormComponent
                     handleSubmit={signUpWithEmail}
                     error={error ? error : null}
@@ -176,10 +177,10 @@ function LoginComponent() {
                     formItems={signInForm ? signInForm : null}
                     text={'Sign In'}
                 />
-                : null}
+                : null} */}
             <Row center='vertical' horizontal='vertical' style={{ marginTop: '10px' }}>OR</Row>
             <Row center='vertical' horizontal='vertical'>
-                {showSignInWithGoogle ?
+                {/* {showSignInWithGoogle ?
                     <Row>
                         {displayToggleOptionRow('signUpWithEmail', 'Sign up with Email')}
                         {displayToggleOptionRow('signInWithEmail', 'Sign in with Email')}
@@ -193,7 +194,7 @@ function LoginComponent() {
                             <Row>
                                 {displayToggleOptionRow('signInWithGoogle', 'Sign in with Google')}
                                 {displayToggleOptionRow('signInWithEmail', 'Sign in with Email')}
-                            </Row> : null}
+                            </Row> : null} */}
             </Row>
         </Column>
     );

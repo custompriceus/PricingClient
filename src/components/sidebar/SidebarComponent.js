@@ -67,13 +67,13 @@ function SidebarComponent() {
                 onClick={() => onClick(SLUGS.pricelist)}
             />
             <div className={classes.separator}></div>
-            <MenuItem
+            {/* <MenuItem
                 id={SLUGS.settings}
                 title='Settings'
                 icon={IconSettings}
                 onClick={() => onClick(SLUGS.settings)}
             />
-            <MenuItem id='logout' title='Logout' icon={IconLogout} onClick={logout} />
+            <MenuItem id='logout' title='Logout' icon={IconLogout} onClick={logout} /> */}
         </Menu>
     );
 }
