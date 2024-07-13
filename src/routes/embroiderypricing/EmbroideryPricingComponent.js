@@ -194,10 +194,10 @@ function EmbroideryPricingComponent() {
         }
 
 
-        if (quantity && parseInt(quantity) < 6) {
-            errors.push(`min quantity of 6 for shirts not met`);
-            setQuantityError('min quantity of 6 for shirts not met');
-        }
+        // if (quantity && parseInt(quantity) < 6) {
+        //     errors.push(`min quantity of 6 for shirts not met`);
+        //     setQuantityError('min quantity of 6 for shirts not met');
+        // }
 
 
         if (errors && errors.length === 0) {
