@@ -82,8 +82,9 @@ function HeaderComponent() {
         case currentItem === SLUGS.pricelist:
             title = 'Price List';
             break;
+            
         default:
-            title = '';
+            title = 'Light/Dark Shirt Price Quote';
     }
 
     function onSettingsClick() {
