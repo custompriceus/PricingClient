@@ -21,6 +21,7 @@ export function getShirtPricingDisplay() {
     return new Promise((resolve, reject) => {
         axios({
             url: url + "api/user/getShirtPricingDisplay",
+            withCredentials: false,
             method: "GET"
         })
             .then(res => {
