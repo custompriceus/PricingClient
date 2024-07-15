@@ -42,6 +42,7 @@ function PublicRoutes(props) {
                 <div className={classes.contentBlock}>
                 <Suspense fallback={<LoadingComponent loading />}>
             <Switch>
+            <Route exact path="/" component={ShirtPricingComponent} state={props.state} setState={props.setState} />
             <Route exact path={SLUGS.shirtpricing} component={ShirtPricingComponent} state={props.state} setState={props.setState} />
             <Route exact path={SLUGS.embroiderypricing} component={EmbroideryPricingComponent} state={props.state} setState={props.setState} />
             <Route exact path={SLUGS.pricelist} component={PriceListComponent} />
