@@ -337,6 +337,7 @@ function ShirtPricingComponent() {
                         <PricingResultsRowComponent
                             text={result.text}
                             value={result.value}
+                            key={result.text}
                             style={result.style}
                             additionalItems={result.additionalItems}
                             costDescription={result.costDescription}
