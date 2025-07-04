@@ -163,7 +163,7 @@ function LoginComponent() {
                 googleLogin()
             }}><img src={require('../../assets/icons/google_signin_buttons/web/2x/btn_google_signin_dark_pressed_web@2x.png')} />
             </Row> : null} */}
-            {/* {showSignUpWithEmail ?
+            {showSignUpWithEmail ?
                 <FormComponent
                     handleSubmit={signUpWithEmail}
                     error={error ? error : null}
@@ -177,10 +177,10 @@ function LoginComponent() {
                     formItems={signInForm ? signInForm : null}
                     text={'Sign In'}
                 />
-                : null} */}
+                : null}
             <Row center='vertical' horizontal='vertical' style={{ marginTop: '10px' }}>OR</Row>
             <Row center='vertical' horizontal='vertical'>
-                {/* {showSignInWithGoogle ?
+                {showSignInWithGoogle ?
                     <Row>
                         {displayToggleOptionRow('signUpWithEmail', 'Sign up with Email')}
                         {displayToggleOptionRow('signInWithEmail', 'Sign in with Email')}
@@ -194,7 +194,7 @@ function LoginComponent() {
                             <Row>
                                 {displayToggleOptionRow('signInWithGoogle', 'Sign in with Google')}
                                 {displayToggleOptionRow('signInWithEmail', 'Sign in with Email')}
-                            </Row> : null} */}
+                            </Row> : null}
             </Row>
         </Column>
     );
