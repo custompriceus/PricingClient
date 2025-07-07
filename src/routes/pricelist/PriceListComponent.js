@@ -63,6 +63,16 @@ function PriceListComponent() {
     const [password, setPassword] = useState();
     const [passwordError, setPasswordError] = useState(false);
     const [passwordSaved, setPasswordSaved] = useState(false);
+    const [screenCharge, setScreenCharge] = useState('');
+const [screenChargeSaved, setScreenChargeSaved] = useState(false);
+const [screenChargeError, setScreenChargeError] = useState(false);
+    
+    const fetchScreenCharge = async () => {
+    const response = await apiServices.getScreenCharge();
+    if (response && response.data && response.data.screenCharge !== undefined) {
+        setScreenCharge(response.data.screenCharge);
+    }
+};
 
     const fetchData = async () => {
         actions.generalActions.setisbusy()
@@ -71,6 +81,7 @@ function PriceListComponent() {
             .then(res => {
                 console.log('new,', res.data)
                 setPrices(res.data)
+                setScreenCharge(res.data.screenCharge || ''); // <-- Add this line
                 actions.generalActions.resetisbusy();
             })
             .catch(err => {
@@ -81,6 +92,7 @@ function PriceListComponent() {
 
     useEffect(() => {
         fetchData().catch(console.error);
+          fetchScreenCharge();
     }, []);
 
     const {
@@ -301,6 +313,35 @@ function PriceListComponent() {
                         />
                     </Row>
                     : null}
+
+                    <Row vertical='center' horizontal='center' style={{ marginTop: 30 }}>
+    <label style={{ marginRight: 10 }}>Screen Charge:</label>
+    <input
+        type="number"
+        value={screenCharge}
+        onChange={e => setScreenCharge(e.target.value)}
+        style={{ marginRight: 10, width: 100 }}
+    />
+    <AwesomeButtonComponent
+        text={'Save '}
+        size={'medium'}
+        type='primary'
+        onPress={async () => {
+            // Call your API to save the screen charge
+            const response = await apiServices.saveScreenCharge(screenCharge);
+           //const response = '';
+            if (response && response.data && response.data.success) {
+                setScreenChargeSaved(true);
+                setScreenChargeError(false);
+                fetchScreenCharge(); // <-- Add this line
+            } else {
+                setScreenChargeError(true);
+            }
+        }}
+    />
+    {screenChargeSaved && <span style={{ color: 'green', marginLeft: 10 }}>Saved!</span>}
+    {screenChargeError && <span style={{ color: 'red', marginLeft: 10 }}>Error saving!</span>}
+</Row>
             </div >
         )
             : null

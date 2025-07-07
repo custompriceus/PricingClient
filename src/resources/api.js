@@ -129,6 +129,7 @@ export function postNewEmbroideryPrices(newEmbroideryPrices,password) {
     })
 }
 
+
 export function getShirtPrices() {
     return new Promise((resolve, reject) => {
         axios({
@@ -273,4 +274,26 @@ export function signUpWithEmail(email, password) {
                 reject(err)
             })
     })
+}
+/************save screen charge***************** */
+export function saveScreenCharge(screenCharge) {
+    return new Promise((resolve, reject) => {
+        axios({
+            url: url + "api/user/saveScreenCharge",
+            method: "POST",
+            data: { screenCharge }
+        })
+            .then(res => {
+                resolve(res)
+            })
+            .catch(err => {
+                console.log('error');
+                console.log(err)
+                reject(err)
+            })
+    })
+}
+
+export function getScreenCharge() {
+    return axios.get(url + "api/user/getScreenCharge");
 }

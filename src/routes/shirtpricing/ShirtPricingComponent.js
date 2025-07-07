@@ -61,6 +61,7 @@ function ShirtPricingComponent() {
     const [additionalItemsMinShirtQuantity, setAdditionalItemsMinShirtQuantity] = useState();
     const [quantity, setQuantity] = useState();
     const [quantityError, setQuantityError] = useState();
+    const [screenChargeDefault, setScreenChargeDefault] = useState(null);
     const printLocationColorOptions = [
         { value: 0, label: '0' },
         { value: 1, label: '1' },
@@ -111,7 +112,7 @@ function ShirtPricingComponent() {
     const [markUp, setMarkUp] = useState();
     const [markUpError, setMarkUpError] = useState();
     const [displayScreenCharge, setDisplayScreenCharge] = useState(false);
-    const [screenCharge, setScreenCharge] = useState(16);
+    const [screenCharge, setScreenCharge] = useState();
     const [screenChargeError, setScreenChargeError] = useState();
     const [displayScreenChargeResults, setDisplayScreenChargeResults] = useState();
     const [canToggleScreenChargeResults, setCanToggleScreenChargeResults] = useState();
@@ -132,10 +133,24 @@ function ShirtPricingComponent() {
                 console.log(err.response)
             })
     }
+    const fetchScreenCharge = async () => {
+            const response = await apiServices.getScreenCharge();
+            console.log(response);
+            if (response && response.data && response.data.screenCharge !== undefined) {
+                setScreenChargeDefault(response.data.screenCharge);
+            }
+        };
 
     useEffect(() => {
         fetchData().catch(console.error);
+        fetchScreenCharge();       
     }, []);
+    useEffect(() => {
+        if (screenChargeDefault !== null && screenCharge === undefined) {
+            setScreenCharge(screenChargeDefault);
+        }
+    }, [screenChargeDefault, screenCharge]);
+
 
     if (state.generalStates.isBusy) {
         return <LoadingComponent loading />
@@ -301,7 +316,7 @@ function ShirtPricingComponent() {
                        // Prefill all print locations
     const allPrintLocations = getAllPrintLocationsFromResults(results);
     setPrintLocations(allPrintLocations.length > 0 ? allPrintLocations : defaultPrintLocations);
-    setAdditionalItems(getSelectedAdditionalItemsFromResults(results));
+    setAdditionalItems(getSelectedAdditionalItemsFromResults(results));    
                     }
                   //  resetAll();
                 })
@@ -399,6 +414,7 @@ function getSelectedAdditionalItemsFromResults(results) {
                             displayInput={false}
                             defaultChecked={true}
                             text={'Include Screen Charge'}
+                            value={screenCharge}
                         />
                     </Column>
                     : null}
@@ -506,7 +522,7 @@ function getSelectedAdditionalItemsFromResults(results) {
                             type={'markUp'}
                             error={markUpError ? markUpError : null}
                             text={'Mark Up (50 for 50%, 100 for 100%, etc.)'}
-                             value={markUp}
+                            value={markUp}
                         />
                     </Column>
                 </Row>
@@ -526,8 +542,9 @@ function getSelectedAdditionalItemsFromResults(results) {
                             type={'screenCharge'}
                             error={screenChargeError ? screenChargeError : null}
                             text={'Include Screen Charge'}
-                            defaultValue={16}
+                            defaultValue={screenChargeDefault}
                             displayInput={true}
+                             value={screenCharge} // <-- ADD THIS LINE
                         />
                     </Column>
                 </Row>
