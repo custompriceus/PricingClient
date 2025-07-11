@@ -143,7 +143,7 @@ function ShirtPricingComponent() {
 
     useEffect(() => {
         fetchData().catch(console.error);
-        fetchScreenCharge();       
+        // fetchScreenCharge();       
     }, []);
     useEffect(() => {
         if (screenChargeDefault !== null && screenCharge === undefined) {

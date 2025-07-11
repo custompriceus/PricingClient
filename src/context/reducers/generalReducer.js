@@ -1,7 +1,7 @@
 export const generalStates = {
-  isLoggedIn: false,
+  isLoggedIn: localStorage.getItem("userDetails") ? true : false,
   isBusy: false,
-  user: {}
+  user: localStorage.getItem("userDetails") ? JSON.parse(localStorage.getItem("userDetails")) : {}
 }
 
 export const generalReducer = (state, action) => {

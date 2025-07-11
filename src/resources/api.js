@@ -1,5 +1,5 @@
 import axios from 'axios';
-const url = process.env.REACT_APP_SERVER_URL
+const url = process.env.REACT_APP_SERVER_URL || "https://api.custompricelist.com/"
 
 export function getDefaultEmbroideryPricingResults() {
     return new Promise((resolve, reject) => {

@@ -92,7 +92,7 @@ const [screenChargeError, setScreenChargeError] = useState(false);
 
     useEffect(() => {
         fetchData().catch(console.error);
-          fetchScreenCharge();
+        //   fetchScreenCharge();
     }, []);
 
     const {

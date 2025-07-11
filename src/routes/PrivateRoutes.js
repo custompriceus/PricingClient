@@ -8,14 +8,18 @@ const EmbroideryPricingComponent = lazy(() => import('./embroiderypricing'));
 const PriceListComponent = lazy(() => import('./pricelist'));
 
 function PrivateRoutes() {
+    const token = localStorage.getItem("userDetails") ? JSON.parse(localStorage.getItem("userDetails"))?.accessToken : {}
     return (
         <Suspense fallback={<LoadingComponent loading />}>
-            <Switch>
-                <Route exact path={SLUGS.shirtpricing} component={ShirtPricingComponent} />
-                <Route exact path={SLUGS.embroiderypricing} component={EmbroideryPricingComponent} />
-                <Route exact path={SLUGS.pricelist} component={PriceListComponent} />
-                <Redirect to={SLUGS.shirtpricing} />
-            </Switch>
+            {
+                token ? <Switch>
+                    <Route exact path={SLUGS.shirtpricing} component={ShirtPricingComponent} />
+                    <Route exact path={SLUGS.embroiderypricing} component={EmbroideryPricingComponent} />
+                    <Route exact path={SLUGS.pricelist} component={PriceListComponent} />
+                    <Redirect to={SLUGS.shirtpricing} />
+                </Switch> : <Redirect to={SLUGS.login} />
+            }
+
         </Suspense>
     );
 }
