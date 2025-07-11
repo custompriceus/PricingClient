@@ -102,13 +102,22 @@ function LocationsComponent(props) {
                                     handleDropdownChange={props.handleDropdownChange ? handleDropdownChange : null}
                                     handleChange={props.handleChange ? handleChange : null}
                                     defaultDropdownValue={{ value: props.newLocationDefaultValue, label: props.newLocationDefaultValue }}
-                                />
+                                     value={
+                                        props.dropdownOptions
+                                            ? props.dropdownOptions.find(opt => opt.value === Number(location.value))
+                                            : undefined
+                                    }
+                               />
                                 {props.selectedAdditionalItems ? <AdditionalItemsComponent
-                                    handleChange={handleAdditionalItemsChange}
-                                    register={location.register}
-                                    displayText={'Additional Information - Mark if any of the following:'}
-                                    selectedAdditionalItems={props.selectedAdditionalItems}
-                                /> : null}
+    handleChange={handleAdditionalItemsChange}
+    register={location.register}
+    displayText={'Additional Information - Mark if any of the following:'}
+    selectedAdditionalItems={props.selectedAdditionalItems}
+    allAdditionalItems={[
+        { name: "Nylon, Poly, Mesh, Jersey" },
+        { name: "Legs, Sweats, Sleeves" }
+    ]}
+/> : null}
 
                             </Column>
                         </Row>

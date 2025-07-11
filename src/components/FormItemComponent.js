@@ -32,10 +32,12 @@ function FormItemComponent(props) {
                         <Column  >
                             <input
                                 style={{ width: '100px' }}
-                                {...register(props.register, {
-                                    onChange: (e) => { props.handleChange(e.target.name, e.target.value, props.type) }
-                                }
-                                )} />
+                                 name={props.register}
+                            value={props.value}
+                                onChange={e => {
+                                    console.log('Input value for', props.register, ':', e.target.value);
+                                    props.handleChange(props.register, e.target.value, props.type);
+                                }} />
                         </Column>
                         :
                         <Column
@@ -45,6 +47,7 @@ function FormItemComponent(props) {
                                 defaultValue={props.defaultDropdownValue}
                                 onChange={handleDropdownChange}
                                 options={props.dropdownOptions}
+                                value={props.value}
                             />
                         </Column>
                     }

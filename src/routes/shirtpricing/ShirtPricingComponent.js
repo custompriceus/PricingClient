@@ -61,6 +61,16 @@ function ShirtPricingComponent() {
     const [additionalItemsMinShirtQuantity, setAdditionalItemsMinShirtQuantity] = useState();
     const [quantity, setQuantity] = useState();
     const [quantityError, setQuantityError] = useState();
+    const [screenChargeDefault, setScreenChargeDefault] = useState(null);
+    const printLocationColorOptions = [
+        { value: 0, label: '0' },
+        { value: 1, label: '1' },
+        { value: 2, label: '2' },
+        { value: 3, label: '3' },
+        { value: 4, label: '4' },
+        { value: 5, label: '5' },
+        { value: 6, label: '6' },
+        ];
     const [defaultPrintLocations, setDefaultPrintLocations] = useState([{
         text: "Print Location 1 - Amt of colors:",
         value: 1,
@@ -83,15 +93,26 @@ function ShirtPricingComponent() {
         maxValue: 6,
         sortValue: 1
     }]);
+    const selectedPrintLocationOptions = printLocations.map(loc =>
+        printLocationColorOptions.find(opt => opt.value === Number(loc.value))
+        );
+    const jerseyNumberSidesOptions = [
+    { value: 0, label: '0' },
+    { value: 1, label: '1' },
+    { value: 2, label: '2' },
+    ];
     //get these deefault vaalues from backend
     const [additionalItems, setAdditionalItems] = useState([]);
-    const [jerseyNumberSides, setJerseyNumberSides] = useState();
+    const [jerseyNumberSides, setJerseyNumberSides] = useState(0);
+    const selectedJerseyNumberSides = jerseyNumberSidesOptions.find(
+        opt => opt.value === Number(jerseyNumberSides)
+        );
     const [shirtCost, setShirtCost] = useState();
     const [shirtCostError, setShirtCostError] = useState();
     const [markUp, setMarkUp] = useState();
     const [markUpError, setMarkUpError] = useState();
     const [displayScreenCharge, setDisplayScreenCharge] = useState(false);
-    const [screenCharge, setScreenCharge] = useState(16);
+    const [screenCharge, setScreenCharge] = useState();
     const [screenChargeError, setScreenChargeError] = useState();
     const [displayScreenChargeResults, setDisplayScreenChargeResults] = useState();
     const [canToggleScreenChargeResults, setCanToggleScreenChargeResults] = useState();
@@ -112,10 +133,24 @@ function ShirtPricingComponent() {
                 console.log(err.response)
             })
     }
+    const fetchScreenCharge = async () => {
+            const response = await apiServices.getScreenCharge();
+            console.log(response);
+            if (response && response.data && response.data.screenCharge !== undefined) {
+                setScreenChargeDefault(response.data.screenCharge);
+            }
+        };
 
     useEffect(() => {
         fetchData().catch(console.error);
+        // fetchScreenCharge();       
     }, []);
+    useEffect(() => {
+        if (screenChargeDefault !== null && screenCharge === undefined) {
+            setScreenCharge(screenChargeDefault);
+        }
+    }, [screenChargeDefault, screenCharge]);
+
 
     if (state.generalStates.isBusy) {
         return <LoadingComponent loading />
@@ -163,20 +198,22 @@ function ShirtPricingComponent() {
     }
 
     const handleAdditionalItemsChange = (inputName, item) => {
-        const i = additionalItems.findIndex(_element => _element.register === inputName && _element.item === item);
-        const additionalItemsClone = [...additionalItems]
-        if (i > -1) {
-            additionalItemsClone.splice(i, 1);
-        }
-        else {
-            additionalItemsClone.push(
-                {
-                    register: inputName,
-                    item: item
-                }
-            )
-        }
-        setAdditionalItems(additionalItemsClone)
+      console.log('handleAdditionalItemsChange called:', inputName, item);
+    const i = additionalItems.findIndex(_element => _element.register === inputName && _element.item === item);
+    const additionalItemsClone = [...additionalItems]
+    if (i > -1) {
+        additionalItemsClone.splice(i, 1);
+    }
+    else {
+        additionalItemsClone.push(
+            {
+                register: inputName,
+                item: item
+            }
+        )
+    }
+    setAdditionalItems(additionalItemsClone)
+     console.log('additionalItems after set:', additionalItemsClone);
     }
 
     const resetAll = () => {
@@ -271,7 +308,17 @@ function ShirtPricingComponent() {
                         setCanToggleScreenChargeResults(false);
                         setDisplayScreenChargeResults(false);
                     }
-                    resetAll();
+                   const results = res.data.resultWithScreenCharges || res.data.resultWithOutScreenCharges;
+                  if (results) {
+                    console.log(getValueFromResults(results, "Quantity:"));
+                         setQuantity(getValueFromResults(results, "Quantity:"));
+                         setJerseyNumberSides(getValueFromResults(results, "Jersey Number Sides:"));
+                       // Prefill all print locations
+    const allPrintLocations = getAllPrintLocationsFromResults(results);
+    setPrintLocations(allPrintLocations.length > 0 ? allPrintLocations : defaultPrintLocations);
+    setAdditionalItems(getSelectedAdditionalItemsFromResults(results));    
+                    }
+                  //  resetAll();
                 })
                 .catch(err => {
                     console.log(err.response)
@@ -279,12 +326,50 @@ function ShirtPricingComponent() {
             actions.generalActions.resetisbusy();
         }
     }
+    function getValueFromResults(results, label) {
+        const found = results.find(item => item.text === label);
+        return found ? found.value : '';
+    }
+    function getAllPrintLocationsFromResults(results) {
+    // Find all results with text like "Print Location X - Amt of colors:"
+    const printLocationRegex = /^Print Location (\d+) - Amt of colors:$/;
+    return results
+        .filter(item => printLocationRegex.test(item.text))
+        .map((item, idx) => ({
+            text: item.text,
+            value: Number(item.value),
+            style: null,
+            register: `printSide${idx + 1}Colors`,
+            required: false,
+            errorDisplayMessage: item.text,
+            inputValueType: 'integer',
+            maxValue: 6,
+            sortValue: idx + 1
+        }));
+}
+function getSelectedAdditionalItemsFromResults(results) {
+    const selected = [];
+    results.forEach(item => {
+        const match = item.text.match(/^Print Location (\d+) - Cost:$/);
+        if (match && item.additionalItems && Array.isArray(item.additionalItems)) {
+            const locationNum = match[1];
+            const register = `printSide${locationNum}Colors`;
+            item.additionalItems.forEach(ai => {
+                selected.push({ register, item: ai });
+            });
+        }
+    });
+    return selected;
+}
 
     const handleDropdownChange = (value, inputName) => {
-        const newData = [...printLocations];
-        const newDataHere = upsert(newData, inputName, value);
-        //cheeck if i can just usse ...printlocations instead of newdata
-        setPrintLocations(newDataHere);
+        // const newData = [...printLocations];
+        // const newDataHere = upsert(newData, inputName, value);
+        // //cheeck if i can just usse ...printlocations instead of newdata
+        // setPrintLocations(newDataHere);
+
+         const newData = upsert(printLocations, inputName, value);
+    setPrintLocations(newData);
     }
 
     const handleJerseySidesDropdownChange = (value) => {
@@ -329,6 +414,7 @@ function ShirtPricingComponent() {
                             displayInput={false}
                             defaultChecked={true}
                             text={'Include Screen Charge'}
+                            value={screenCharge}
                         />
                     </Column>
                     : null}
@@ -365,13 +451,14 @@ function ShirtPricingComponent() {
                             type={'quantity'}
                             text={'Quantity:'}
                             error={quantityError ? quantityError : null}
+                            value={quantity} // <-- Add this line
                         />
                     </Column>
                 </Row>
                 <LocationsComponent
                     handleAdditionalItemsChange={handleAdditionalItemsChange}
-                    selectedAdditionalItems={selectedAdditionalItems}
-                    defaultLocations={defaultPrintLocations}
+                    selectedAdditionalItems={additionalItems}
+                    defaultLocations={printLocations}
                     addLocation={addPrintLocation}
                     removeLocation={removePrintLocation}
                     handleDropdownChange={handleDropdownChange}
@@ -380,15 +467,7 @@ function ShirtPricingComponent() {
                     registerPrefix={'printSide'}
                     registerSuffix={'Colors'}
                     dropdown={true}
-                    dropdownOptions={[
-                        { value: 0, label: '0' },
-                        { value: 1, label: '1' },
-                        { value: 2, label: '2' },
-                        { value: 3, label: '3' },
-                        { value: 4, label: '4' },
-                        { value: 5, label: '5' },
-                        { value: 6, label: '6' },
-                    ]}
+                    dropdownOptions={printLocationColorOptions}
                     newLocationDefaultValue={1}
                 />
                 <Row>
@@ -404,14 +483,11 @@ function ShirtPricingComponent() {
                             type={'jerseyNumberSides'}
                             text={'Optional: If adding numbers, how many sides?'}
                             dropdown={true}
-                            dropdownOptions={[
-                                { value: 0, label: '0' },
-                                { value: 1, label: '1' },
-                                { value: 2, label: '2' },
-                            ]}
+                            dropdownOptions={jerseyNumberSidesOptions}
                             handleDropdownChange={handleJerseySidesDropdownChange}
-                            defaultDropdownValue={{ value: 0, label: '0' }}
-                        />
+                            defaultDropdownValue={jerseyNumberSidesOptions[0]}
+                            value={selectedJerseyNumberSides}
+                            />
                     </Column>
                 </Row>
                 <Row>
@@ -428,6 +504,7 @@ function ShirtPricingComponent() {
                             type={'shirtCost'}
                             error={shirtCostError ? shirtCostError : null}
                             text={'Shirt Cost (1.5 for $1.50, 2.00 for $2.00, etc.)'}
+                            value={shirtCost}
                         />
                     </Column>
                 </Row>
@@ -445,6 +522,7 @@ function ShirtPricingComponent() {
                             type={'markUp'}
                             error={markUpError ? markUpError : null}
                             text={'Mark Up (50 for 50%, 100 for 100%, etc.)'}
+                            value={markUp}
                         />
                     </Column>
                 </Row>
@@ -464,8 +542,9 @@ function ShirtPricingComponent() {
                             type={'screenCharge'}
                             error={screenChargeError ? screenChargeError : null}
                             text={'Include Screen Charge'}
-                            defaultValue={16}
+                            defaultValue={screenChargeDefault}
                             displayInput={true}
+                             value={screenCharge} // <-- ADD THIS LINE
                         />
                     </Column>
                 </Row>

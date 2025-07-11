@@ -68,7 +68,9 @@ function HeaderComponent() {
     const { state, actions } = useContext(StoreContext);
 
     function logout() {
+        localStorage.clear()
         actions.generalActions.logout()
+        window.location = "/login"
     }
 
     let title;

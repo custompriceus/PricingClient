@@ -1,16 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Column, Row } from 'simple-flexbox';
-import { useForm } from 'react-hook-form';
 
 function ToggleFormItemComponent(props) {
-    const {
-        register,
-        formState: { errors },
-        reset
-    } = useForm({
-        mode: "onBlur",
-    });
-
     const handleSubmit = async (event) => {
         event.preventDefault();
     }
@@ -18,13 +9,13 @@ function ToggleFormItemComponent(props) {
     return (
         <form onSubmit={handleSubmit}>
             <Column flex={1} key={props.register}>
-                <Row >
-                    <Column flex={.8} >
+                <Row>
+                    <Column flex={.8}>
                         <label style={{ cursor: 'pointer' }}>
                             <input
                                 type="checkbox"
-                                defaultChecked={props.defaultChecked}
-                                onClick={() => props.handleToggleChange()}
+                                checked={props.checked}
+                                onChange={props.handleToggleChange}
                                 style={{ cursor: 'pointer' }}
                             />
                             {props.text}
@@ -33,18 +24,17 @@ function ToggleFormItemComponent(props) {
                     {!props.displayInput ? null :
                         <Column style={{ width: '100px' }}>
                             <input
-                                defaultValue={props.defaultValue}
-                                {...register(props.register, {
-                                    onChange: (e) => { props.handleChange(e.target.name, e.target.value, props.type) }
-                                }
-                                )}
-                                disabled={!props.checked ? true : false}
+                                name={props.register}
+                                value={props.value}
+                                onChange={e => props.handleChange(props.register, e.target.value, props.type)}
+                                disabled={!props.checked}
+                                
                             />
                         </Column>
                     }
                 </Row>
             </Column>
-        </form >
+        </form>
     );
 }
 

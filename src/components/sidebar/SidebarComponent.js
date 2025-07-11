@@ -50,7 +50,7 @@ function SidebarComponent() {
             </div>
             <MenuItem
                 id={SLUGS.shirtpricing}
-                title='Light/Dark Shirt Pricing'
+                title='Screen Print Pricing'
                 icon={IconSubscription}
                 onClick={() => onClick(SLUGS.shirtpricing)}
             />

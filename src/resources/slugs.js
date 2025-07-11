@@ -1,5 +1,5 @@
 export default {
-default:'/shirtpricing',
+default:'/login',
     settings: '/settings',
     login: '/login',
     shirtpricing: '/shirtpricing',
