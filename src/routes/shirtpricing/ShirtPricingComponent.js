@@ -150,10 +150,11 @@ const [autoFillEnabled, setAutoFillEnabled] = useState(true);
 
     useEffect(() => {
         fetchData().catch(console.error);
+    //      if (autoFillEnabled) {
+    //     handleDuplicate('screen_light');
+    // }     
         fetchScreenCharge();  
-        if (autoFillEnabled) {
-        handleDuplicate('screen_light');
-    }     
+       
     }, []);
     useEffect(() => {
         if (screenChargeDefault !== null && screenCharge === undefined) {
@@ -219,6 +220,7 @@ const [autoFillEnabled, setAutoFillEnabled] = useState(true);
                 return;
             case "printLocation":
                 const newData = upsert(printLocations, inputName, value);
+                console.log(newData);
                 setPrintLocations(newData);
                 return;
             case "shirtCost":
@@ -362,11 +364,12 @@ const [autoFillEnabled, setAutoFillEnabled] = useState(true);
                     }
                    const results = res.data.resultWithScreenCharges || res.data.resultWithOutScreenCharges;
                   if (results) {
-                    console.log(getValueFromResults(results, "Quantity:"));
+                    //console.log(getValueFromResults(results, "Quantity:"));
                          setQuantity(getValueFromResults(results, "Quantity:"));
                          setJerseyNumberSides(getValueFromResults(results, "Jersey Number Sides:"));
                        // Prefill all print locations
     const allPrintLocations = getAllPrintLocationsFromResults(results);
+    
     setPrintLocations(allPrintLocations.length > 0 ? allPrintLocations : defaultPrintLocations);
     setAdditionalItems(getSelectedAdditionalItemsFromResults(results));    
                     }
@@ -385,6 +388,7 @@ const [autoFillEnabled, setAutoFillEnabled] = useState(true);
     function getAllPrintLocationsFromResults(results) {
     // Find all results with text like "Print Location X - Amt of colors:"
     const printLocationRegex = /^Print Location (\d+) - Amt of colors:$/;
+    
     return results
         .filter(item => printLocationRegex.test(item.text))
         .map((item, idx) => ({
@@ -421,6 +425,7 @@ function getSelectedAdditionalItemsFromResults(results) {
         // setPrintLocations(newDataHere);
 
          const newData = upsert(printLocations, inputName, value);
+       
     setPrintLocations(newData);
     }
 
@@ -445,7 +450,7 @@ function getSelectedAdditionalItemsFromResults(results) {
     const handleDuplicate = (tab) => {
         const tabKey = TAB_KEYS[tab];
         const saved = loadInputsForTab(tabKey);
-
+        
         if (saved) {
             setQuantity(saved.quantity || '');
             setPrintLocations(saved.printLocations || defaultPrintLocations);
@@ -505,8 +510,7 @@ function getSelectedAdditionalItemsFromResults(results) {
     }
 
     return (
-    <>
-      
+       <>
     <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
       <AwesomeButtonComponent
         text="Duplicate Last Inputs"
@@ -524,37 +528,9 @@ function getSelectedAdditionalItemsFromResults(results) {
           {' '}Auto-fill with last used values?
         </label>
       </div>
-    </div>
+    </div>     
         <Row>
-            {/* <Column flex={.5}>
-                <Row>
-                    <Column flex={0.05}>
-
-                    </Column>
-                    <Column flex={.95}
-                        style={{ marginLeft: '10px', marginRight: '10px', marginBottom: '10px' }}
-                        vertical='center'
-                    >
-                         <AwesomeButtonComponent
-        text="Duplicate Last Inputs"
-        type="primary"
-        size="medium"
-        onPress={() => handleDuplicate('screen_light')}
-      />
-      <div style={{ marginTop: '10px' }}>
-        <label>
-          <input
-            type="checkbox"
-            checked={autoFillEnabled}
-            onChange={() => setAutoFillEnabled(!autoFillEnabled)}
-          />
-          {' '}Auto-fill with last used values?
-        </label>
-         </div>
-                    </Column>
-                  
-                </Row>
-                  </Column> */}
+            
             <Column flex={.5}>
                 <Row>
                     <Column flex={0.05}>
@@ -692,7 +668,6 @@ function getSelectedAdditionalItemsFromResults(results) {
             </Column>
         </Row >
         </>
-
     );
 }
 

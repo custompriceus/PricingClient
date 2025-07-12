@@ -106,7 +106,7 @@ function EmbroideryPricingComponent() {
     useEffect(() => {
         fetchData().catch(console.error);
          if (autoFillEnabled) {
-        handleDuplicate('embroidery');
+      //  handleDuplicate('embroidery');
     }     
 
     }, []);
@@ -275,11 +275,10 @@ function EmbroideryPricingComponent() {
     const handleDuplicate = (tab) => {
             const tabKey = TAB_KEYS[tab];
             const saved = loadInputsForTab(tabKey);
-             console.log(saved);
            
             if (saved) {
                 setQuantity(saved.quantity || '');
-                setStitchLocations(saved.stitchLocation || defaultStitchLocations);
+                setStitchLocations(saved.stitchLocations || defaultStitchLocations);
                 setShirtCost(saved.shirtCost || '');
                 setMarkUp(saved.markUp || '');
             } else {
@@ -324,7 +323,7 @@ function EmbroideryPricingComponent() {
                 text="Duplicate Last Inputs"
                 type="primary"
                 size="medium"
-                onPress={() => handleDuplicate('embroidery')}
+               onPress={() => handleDuplicate('embroidery')}
               />
               <div style={{ marginLeft: 16 }}>
                 <label>

@@ -9,7 +9,7 @@ function Routes() {
     const { state } = useContext(StoreContext);
     const { pathname } = useLocation();
 
-    console.log(state , "<<<Asdflogin");
+   // console.log(state , "<<<Asdflogin");
     
     // eslint-disable-next-line no-unused-vars
     const [width, height] = useWindowSize();

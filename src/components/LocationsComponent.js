@@ -10,23 +10,37 @@ function LocationsComponent(props) {
     const [locations, setLocations] = useState();
     const [materialItems, setMaterialItems] = useState([]);
     useEffect(() => {
-        setLocations(props.defaultLocations);
-        const fetchMaterialItems = async () => {
-            try {
-                const response = await apiServices.getMaterialData();
-                if (response && response.data && Array.isArray(response.data.alldata)) {
-                    const dynamicItems = response.data.alldata.map(item => ({
-                        name: item.key   // or use item.value if that’s what you want to display
-                    }));
-                    setMaterialItems(dynamicItems);
-                }
-            } catch (error) {
-                console.error("Failed to load material items", error);
-            }
-        };
+  let isMounted = true; // ✅ Track if the component is still mounted
 
-        fetchMaterialItems();
-    }, []);
+  setLocations(props.defaultLocations);
+
+  const fetchMaterialItems = async () => {
+    try {
+      const response = await apiServices.getMaterialData();
+      if (
+        isMounted &&                                // ✅ Only update state if still mounted
+        response && 
+        response.data && 
+        Array.isArray(response.data.alldata)
+      ) {
+        const dynamicItems = response.data.alldata.map(item => ({
+          name: item.key,
+        }));
+        setMaterialItems(dynamicItems);             // ✅ Safe state update
+      }
+    } catch (error) {
+      if (isMounted) {
+        console.error("Failed to load material items", error);
+      }
+    }
+  };
+
+  fetchMaterialItems();
+
+  return () => {
+    isMounted = false; // ✅ Cleanup on unmount
+  };
+}, []);
 
     const handleAdditionalItemsChange = (inputName, item) => {
         props.handleAdditionalItemsChange(inputName, item)

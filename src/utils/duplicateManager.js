@@ -17,6 +17,5 @@ export const saveInputsForTab = (tabKey, data) => {
  */
 export const loadInputsForTab = (tabKey) => {
   const stored = localStorage.getItem(tabKey);
-  console.log(stored);
   return stored ? JSON.parse(stored) : null;
 };
