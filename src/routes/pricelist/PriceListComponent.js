@@ -116,9 +116,10 @@ const [screenDataError, setMaterialDataError] = useState(false);
     }
 
     useEffect(() => {
-        fetchData().catch(console.error);
+        fetchData().catch(console.error);      
           fetchScreenCharge();
           fetchMaterialData();
+
     }, []);
 
     const {
