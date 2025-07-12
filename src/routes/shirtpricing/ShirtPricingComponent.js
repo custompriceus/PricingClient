@@ -11,7 +11,7 @@ import FormItemComponent from 'components/FormItemComponent';
 import LocationsComponent from 'components/LocationsComponent';
 import AwesomeButtonComponent from 'components/AwesomeButtonComponent';
 import ToggleFormItemComponent from 'components/ToggleFormItemComponent';
-
+import { saveInputsForTab, loadInputsForTab } from '../../utils/duplicateManager';
 
 const useStyles = createUseStyles({
     cardsContainer: {
@@ -55,6 +55,13 @@ const useStyles = createUseStyles({
 
 function ShirtPricingComponent() {
     const classes = useStyles();
+    const TAB_KEYS = {
+    screen_light: 'screen_light_prev',
+    screen_dark: 'screen_dark_prev',
+    embroidery: 'embroidery_prev'
+};
+const [autoFillEnabled, setAutoFillEnabled] = useState(true);
+
     const { actions, state } = useContext(StoreContext);
     const [shirtPricingResults, setShirtPricingResults] = useState();
     const [selectedAdditionalItems, setSelectedAdditionalItems] = useState();
@@ -143,7 +150,10 @@ function ShirtPricingComponent() {
 
     useEffect(() => {
         fetchData().catch(console.error);
-        // fetchScreenCharge();       
+        fetchScreenCharge();  
+        if (autoFillEnabled) {
+        handleDuplicate('screen_light');
+    }     
     }, []);
     useEffect(() => {
         if (screenChargeDefault !== null && screenCharge === undefined) {
@@ -151,6 +161,34 @@ function ShirtPricingComponent() {
         }
     }, [screenChargeDefault, screenCharge]);
 
+//     useEffect(() => {
+//     const saved = localStorage.getItem('shirtFormData');
+//     if (saved) {
+//         const parsed = JSON.parse(saved);
+//         setQuantity(parsed.quantity || '');
+//         setPrintLocations(parsed.printLocations || defaultPrintLocations);
+//         setJerseyNumberSides(parsed.jerseyNumberSides || 0);
+//         setShirtCost(parsed.shirtCost || '');
+//         setMarkUp(parsed.markUp || '');
+//         setScreenCharge(parsed.screenCharge || screenChargeDefault || '');
+//         setAdditionalItems(parsed.additionalItems || []);
+//         setDisplayScreenCharge(parsed.displayScreenCharge || false);
+//     }
+// }, []);
+
+// useEffect(() => {
+//     const formData = {
+//         quantity,
+//         printLocations,
+//         jerseyNumberSides,
+//         shirtCost,
+//         markUp,
+//         screenCharge,
+//         displayScreenCharge,
+//         additionalItems
+//     };
+//     localStorage.setItem('shirtFormData', JSON.stringify(formData));
+// }, [quantity, printLocations, jerseyNumberSides, shirtCost, markUp, screenCharge, displayScreenCharge, additionalItems]);
 
     if (state.generalStates.isBusy) {
         return <LoadingComponent loading />
@@ -279,6 +317,20 @@ function ShirtPricingComponent() {
         }
 
         if (errors && errors.length === 0) {
+            const tabKey = TAB_KEYS.screen_light;
+
+            const saveData = {
+            quantity,
+            printLocations,
+            jerseyNumberSides,
+            shirtCost,
+            markUp,
+            screenCharge,
+            displayScreenCharge,
+            additionalItems
+        };
+        saveInputsForTab(tabKey, saveData);
+
             const data = {
                 quantity: quantity,
                 locations: printLocations,
@@ -390,6 +442,24 @@ function getSelectedAdditionalItemsFromResults(results) {
         setDisplayScreenChargeResults(!displayScreenChargeResults);
     }
 
+    const handleDuplicate = (tab) => {
+        const tabKey = TAB_KEYS[tab];
+        const saved = loadInputsForTab(tabKey);
+
+        if (saved) {
+            setQuantity(saved.quantity || '');
+            setPrintLocations(saved.printLocations || defaultPrintLocations);
+            setJerseyNumberSides(saved.jerseyNumberSides || 0);
+            setShirtCost(saved.shirtCost || '');
+            setMarkUp(saved.markUp || '');
+            setScreenCharge(saved.screenCharge || screenChargeDefault || '');
+            setAdditionalItems(saved.additionalItems || []);
+            setDisplayScreenCharge(saved.displayScreenCharge || false);
+        } else {
+            alert('No previous values found for this tab.');
+        }
+    };
+
     const addPrintLocation = (printLocation) => {
         const newPrintLocations = [...printLocations, printLocation];
         setPrintLocations(newPrintLocations);
@@ -435,7 +505,56 @@ function getSelectedAdditionalItemsFromResults(results) {
     }
 
     return (
+    <>
+      
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+      <AwesomeButtonComponent
+        text="Duplicate Last Inputs"
+        type="primary"
+        size="medium"
+        onPress={() => handleDuplicate('screen_light')}
+      />
+      <div style={{ marginLeft: 16 }}>
+        <label>
+          <input
+            type="checkbox"
+            checked={autoFillEnabled}
+            onChange={() => setAutoFillEnabled(!autoFillEnabled)}
+          />
+          {' '}Auto-fill with last used values?
+        </label>
+      </div>
+    </div>
         <Row>
+            {/* <Column flex={.5}>
+                <Row>
+                    <Column flex={0.05}>
+
+                    </Column>
+                    <Column flex={.95}
+                        style={{ marginLeft: '10px', marginRight: '10px', marginBottom: '10px' }}
+                        vertical='center'
+                    >
+                         <AwesomeButtonComponent
+        text="Duplicate Last Inputs"
+        type="primary"
+        size="medium"
+        onPress={() => handleDuplicate('screen_light')}
+      />
+      <div style={{ marginTop: '10px' }}>
+        <label>
+          <input
+            type="checkbox"
+            checked={autoFillEnabled}
+            onChange={() => setAutoFillEnabled(!autoFillEnabled)}
+          />
+          {' '}Auto-fill with last used values?
+        </label>
+         </div>
+                    </Column>
+                  
+                </Row>
+                  </Column> */}
             <Column flex={.5}>
                 <Row>
                     <Column flex={0.05}>
@@ -572,6 +691,8 @@ function getSelectedAdditionalItemsFromResults(results) {
                 }
             </Column>
         </Row >
+        </>
+
     );
 }
 
