@@ -297,3 +297,27 @@ export function saveScreenCharge(screenCharge) {
 export function getScreenCharge() {
     return axios.get(url + "api/user/getScreenCharge");
 }
+
+/************save screen charge***************** */
+export function saveMaterialData(field1,field2,field3,field4) {
+    return new Promise((resolve, reject) => {
+        axios({
+            url: url + "api/user/saveMaterialData",
+            method: "POST",
+            data: { field1,field2,field3,field4 }
+        })
+            .then(res => {
+                resolve(res)
+            })
+            .catch(err => {
+                console.log('error');
+                console.log(err)
+                reject(err)
+            })
+    })
+}
+
+export function getMaterialData() {
+    return axios.get(url + "api/user/getMaterialData");
+}
+

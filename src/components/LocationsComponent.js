@@ -4,12 +4,28 @@ import FormItemComponent from './FormItemComponent';
 import AdditionalItemsComponent from './AdditionalItemsComponent';
 import { FaTrash } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
+import * as apiServices from '../resources/api';
 
 function LocationsComponent(props) {
     const [locations, setLocations] = useState();
-
+    const [materialItems, setMaterialItems] = useState([]);
     useEffect(() => {
         setLocations(props.defaultLocations);
+        const fetchMaterialItems = async () => {
+            try {
+                const response = await apiServices.getMaterialData();
+                if (response && response.data && Array.isArray(response.data.alldata)) {
+                    const dynamicItems = response.data.alldata.map(item => ({
+                        name: item.key   // or use item.value if that’s what you want to display
+                    }));
+                    setMaterialItems(dynamicItems);
+                }
+            } catch (error) {
+                console.error("Failed to load material items", error);
+            }
+        };
+
+        fetchMaterialItems();
     }, []);
 
     const handleAdditionalItemsChange = (inputName, item) => {
@@ -113,10 +129,7 @@ function LocationsComponent(props) {
     register={location.register}
     displayText={'Additional Information - Mark if any of the following:'}
     selectedAdditionalItems={props.selectedAdditionalItems}
-    allAdditionalItems={[
-        { name: "Nylon, Poly, Mesh, Jersey" },
-        { name: "Legs, Sweats, Sleeves" }
-    ]}
+    allAdditionalItems={materialItems}
 /> : null}
 
                             </Column>
