@@ -33,7 +33,7 @@ function FormItemComponent(props) {
                             <input
                                 style={{ width: '100px' }}
                                  name={props.register}
-                            value={props.value}
+                             value={props.value}
                                 onChange={e => {
                                     console.log('Input value for', props.register, ':', e.target.value);
                                     props.handleChange(props.register, e.target.value, props.type);

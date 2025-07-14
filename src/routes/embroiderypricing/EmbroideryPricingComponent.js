@@ -9,6 +9,7 @@ import PricingResultsRowComponent from 'components/PricingResultsRowComponent';
 import FormItemComponent from 'components/FormItemComponent';
 import LocationsComponent from 'components/LocationsComponent';
 import AwesomeButtonComponent from 'components/AwesomeButtonComponent';
+import { saveInputsForTab, loadInputsForTab } from '../../utils/duplicateManager';
 
 const useStyles = createUseStyles({
     cardsContainer: {
@@ -52,6 +53,12 @@ const useStyles = createUseStyles({
 
 function EmbroideryPricingComponent() {
     const classes = useStyles();
+     const TAB_KEYS = {
+        screen_light: 'screen_light_prev',
+        screen_dark: 'screen_dark_prev',
+        embroidery: 'embroidery_prev'
+    };
+    const [autoFillEnabled, setAutoFillEnabled] = useState(true);
     const { actions, state } = useContext(StoreContext);
     const [embroideryPricingResults, setEmbroideryPricingResults] = useState();
     const [quantity, setQuantity] = useState();
@@ -98,6 +105,10 @@ function EmbroideryPricingComponent() {
 
     useEffect(() => {
         fetchData().catch(console.error);
+         if (autoFillEnabled) {
+      //  handleDuplicate('embroidery');
+    }     
+
     }, []);
 
     if (state.generalStates.isBusy) {
@@ -201,6 +212,17 @@ function EmbroideryPricingComponent() {
 
 
         if (errors && errors.length === 0) {
+             const tabKey = TAB_KEYS.embroidery;
+            
+                const saveData = {
+                quantity,
+                stitchLocations,
+                shirtCost,                
+                markUp
+               
+            };
+            saveInputsForTab(tabKey, saveData);
+            
             const data = {
                 quantity: quantity,
                 locations: stitchLocations,
@@ -213,7 +235,16 @@ function EmbroideryPricingComponent() {
                 .then(res => {
                     console.log('data,', res.data.result)
                     setEmbroideryPricingResults(res.data.result);
-                    resetAll();
+                     const results = res.data.result || res.data.result;
+                  if (results) {
+                         setQuantity(getValueFromResults(results, "Quantity:"));
+                       const allPrintLocations = getAllStitchLocationsFromResults(results);
+                        setStitchLocations(allPrintLocations.length > 0 ? allPrintLocations : defaultStitchLocations);
+                            
+                    }
+
+                    //resetAll();
+
                 })
                 .catch(err => {
                     console.log(err.response)
@@ -221,7 +252,39 @@ function EmbroideryPricingComponent() {
             actions.generalActions.resetisbusy();
         }
     }
-
+    function getAllStitchLocationsFromResults(results) {
+    // Find all results with text like "Print Location X - Amt of colors:"
+    const printLocationRegex = /^Stitch Location (\d+) - Amt of stitches:$/;
+    return results
+        .filter(item => printLocationRegex.test(item.text))
+        .map((item, idx) => ({
+            text: item.text,
+            value: Number(item.value),
+            style: null,
+            required: false,
+            errorDisplayMessage: item.text,
+            inputValueType: 'integer',
+            maxValue: 6,
+            sortValue: idx + 1
+        }));
+}
+    function getValueFromResults(results, label) {
+        const found = results.find(item => item.text === label);
+        return found ? found.value : '';
+    }
+    const handleDuplicate = (tab) => {
+            const tabKey = TAB_KEYS[tab];
+            const saved = loadInputsForTab(tabKey);
+           
+            if (saved) {
+                setQuantity(saved.quantity || '');
+                setStitchLocations(saved.stitchLocations || defaultStitchLocations);
+                setShirtCost(saved.shirtCost || '');
+                setMarkUp(saved.markUp || '');
+            } else {
+                alert('No previous values found for this tab.');
+            }
+        };
 
     const addStitchLocation = (stitchLocation) => {
         const newStitchLocations = [...stitchLocations, stitchLocation];
@@ -253,6 +316,26 @@ function EmbroideryPricingComponent() {
     }
 
     return (
+        <>
+              
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+              <AwesomeButtonComponent
+                text="Duplicate Last Inputs"
+                type="primary"
+                size="medium"
+               onPress={() => handleDuplicate('embroidery')}
+              />
+              <div style={{ marginLeft: 16 }}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={autoFillEnabled}
+                    onChange={() => setAutoFillEnabled(!autoFillEnabled)}
+                  />
+                  {' '}Auto-fill with last used values?
+                </label>
+              </div>
+            </div>
         <Row>
             <Column flex={.5}>
                 <Row>
@@ -269,12 +352,13 @@ function EmbroideryPricingComponent() {
                             type={'quantity'}
                             text={'Quantity:'}
                             error={quantityError ? quantityError : null}
+                            value={quantity}
                         />
                     </Column>
                 </Row>
                 <LocationsComponent
                     handleChange={handleChange}
-                    defaultLocations={defaultStitchLocations}
+                    defaultLocations={stitchLocations}
                     addLocation={addStitchLocation}
                     removeLocation={removeStitchLocation}
                     textPrefix={'Stitch Location '}
@@ -299,6 +383,7 @@ function EmbroideryPricingComponent() {
                             type={'shirtCost'}
                             error={shirtCostError ? shirtCostError : null}
                             text={'Shirt Cost (1.5 for $1.50, 2.00 for $2.00, etc.)'}
+                            value={shirtCost}
                         />
                     </Column>
                 </Row>
@@ -316,6 +401,7 @@ function EmbroideryPricingComponent() {
                             type={'markUp'}
                             error={markUpError ? markUpError : null}
                             text={'Mark Up (50 for 50%, 100 for 100%, etc.)'}
+                             value={markUp}
                         />
                     </Column>
                 </Row>
@@ -343,6 +429,7 @@ function EmbroideryPricingComponent() {
                 }
             </Column>
         </Row >
+        </>
     );
 }
 

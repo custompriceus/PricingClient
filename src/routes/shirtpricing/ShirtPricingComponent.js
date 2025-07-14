@@ -11,7 +11,7 @@ import FormItemComponent from 'components/FormItemComponent';
 import LocationsComponent from 'components/LocationsComponent';
 import AwesomeButtonComponent from 'components/AwesomeButtonComponent';
 import ToggleFormItemComponent from 'components/ToggleFormItemComponent';
-
+import { saveInputsForTab, loadInputsForTab } from '../../utils/duplicateManager';
 
 const useStyles = createUseStyles({
     cardsContainer: {
@@ -55,6 +55,13 @@ const useStyles = createUseStyles({
 
 function ShirtPricingComponent() {
     const classes = useStyles();
+    const TAB_KEYS = {
+    screen_light: 'screen_light_prev',
+    screen_dark: 'screen_dark_prev',
+    embroidery: 'embroidery_prev'
+};
+const [autoFillEnabled, setAutoFillEnabled] = useState(true);
+
     const { actions, state } = useContext(StoreContext);
     const [shirtPricingResults, setShirtPricingResults] = useState();
     const [selectedAdditionalItems, setSelectedAdditionalItems] = useState();
@@ -143,7 +150,11 @@ function ShirtPricingComponent() {
 
     useEffect(() => {
         fetchData().catch(console.error);
-        // fetchScreenCharge();       
+    //      if (autoFillEnabled) {
+    //     handleDuplicate('screen_light');
+    // }     
+        fetchScreenCharge();  
+       
     }, []);
     useEffect(() => {
         if (screenChargeDefault !== null && screenCharge === undefined) {
@@ -151,6 +162,34 @@ function ShirtPricingComponent() {
         }
     }, [screenChargeDefault, screenCharge]);
 
+//     useEffect(() => {
+//     const saved = localStorage.getItem('shirtFormData');
+//     if (saved) {
+//         const parsed = JSON.parse(saved);
+//         setQuantity(parsed.quantity || '');
+//         setPrintLocations(parsed.printLocations || defaultPrintLocations);
+//         setJerseyNumberSides(parsed.jerseyNumberSides || 0);
+//         setShirtCost(parsed.shirtCost || '');
+//         setMarkUp(parsed.markUp || '');
+//         setScreenCharge(parsed.screenCharge || screenChargeDefault || '');
+//         setAdditionalItems(parsed.additionalItems || []);
+//         setDisplayScreenCharge(parsed.displayScreenCharge || false);
+//     }
+// }, []);
+
+// useEffect(() => {
+//     const formData = {
+//         quantity,
+//         printLocations,
+//         jerseyNumberSides,
+//         shirtCost,
+//         markUp,
+//         screenCharge,
+//         displayScreenCharge,
+//         additionalItems
+//     };
+//     localStorage.setItem('shirtFormData', JSON.stringify(formData));
+// }, [quantity, printLocations, jerseyNumberSides, shirtCost, markUp, screenCharge, displayScreenCharge, additionalItems]);
 
     if (state.generalStates.isBusy) {
         return <LoadingComponent loading />
@@ -181,6 +220,7 @@ function ShirtPricingComponent() {
                 return;
             case "printLocation":
                 const newData = upsert(printLocations, inputName, value);
+                console.log(newData);
                 setPrintLocations(newData);
                 return;
             case "shirtCost":
@@ -279,6 +319,20 @@ function ShirtPricingComponent() {
         }
 
         if (errors && errors.length === 0) {
+            const tabKey = TAB_KEYS.screen_light;
+
+            const saveData = {
+            quantity,
+            printLocations,
+            jerseyNumberSides,
+            shirtCost,
+            markUp,
+            screenCharge,
+            displayScreenCharge,
+            additionalItems
+        };
+        saveInputsForTab(tabKey, saveData);
+
             const data = {
                 quantity: quantity,
                 locations: printLocations,
@@ -308,15 +362,16 @@ function ShirtPricingComponent() {
                         setCanToggleScreenChargeResults(false);
                         setDisplayScreenChargeResults(false);
                     }
-                    const results = res.data.resultWithScreenCharges || res.data.resultWithOutScreenCharges;
-                    if (results) {
-                        console.log(getValueFromResults(results, "Quantity:"));
-                        setQuantity(getValueFromResults(results, "Quantity:"));
-                        setJerseyNumberSides(getValueFromResults(results, "Jersey Number Sides:"));
-                        // Prefill all print locations
-                        const allPrintLocations = getAllPrintLocationsFromResults(results);
-                        setPrintLocations(allPrintLocations.length > 0 ? allPrintLocations : defaultPrintLocations);
-                        setAdditionalItems(getSelectedAdditionalItemsFromResults(results));
+                   const results = res.data.resultWithScreenCharges || res.data.resultWithOutScreenCharges;
+                  if (results) {
+                    //console.log(getValueFromResults(results, "Quantity:"));
+                         setQuantity(getValueFromResults(results, "Quantity:"));
+                         setJerseyNumberSides(getValueFromResults(results, "Jersey Number Sides:"));
+                       // Prefill all print locations
+    const allPrintLocations = getAllPrintLocationsFromResults(results);
+    
+    setPrintLocations(allPrintLocations.length > 0 ? allPrintLocations : defaultPrintLocations);
+    setAdditionalItems(getSelectedAdditionalItemsFromResults(results));    
                     }
                     //  resetAll();
                 })
@@ -331,36 +386,37 @@ function ShirtPricingComponent() {
         return found ? found.value : '';
     }
     function getAllPrintLocationsFromResults(results) {
-        // Find all results with text like "Print Location X - Amt of colors:"
-        const printLocationRegex = /^Print Location (\d+) - Amt of colors:$/;
-        return results
-            .filter(item => printLocationRegex.test(item.text))
-            .map((item, idx) => ({
-                text: item.text,
-                value: Number(item.value),
-                style: null,
-                register: `printSide${idx + 1}Colors`,
-                required: false,
-                errorDisplayMessage: item.text,
-                inputValueType: 'integer',
-                maxValue: 6,
-                sortValue: idx + 1
-            }));
-    }
-    function getSelectedAdditionalItemsFromResults(results) {
-        const selected = [];
-        results.forEach(item => {
-            const match = item.text.match(/^Print Location (\d+) - Cost:$/);
-            if (match && item.additionalItems && Array.isArray(item.additionalItems)) {
-                const locationNum = match[1];
-                const register = `printSide${locationNum}Colors`;
-                item.additionalItems.forEach(ai => {
-                    selected.push({ register, item: ai });
-                });
-            }
-        });
-        return selected;
-    }
+    // Find all results with text like "Print Location X - Amt of colors:"
+    const printLocationRegex = /^Print Location (\d+) - Amt of colors:$/;
+    
+    return results
+        .filter(item => printLocationRegex.test(item.text))
+        .map((item, idx) => ({
+            text: item.text,
+            value: Number(item.value),
+            style: null,
+            register: `printSide${idx + 1}Colors`,
+            required: false,
+            errorDisplayMessage: item.text,
+            inputValueType: 'integer',
+            maxValue: 6,
+            sortValue: idx + 1
+        }));
+}
+function getSelectedAdditionalItemsFromResults(results) {
+    const selected = [];
+    results.forEach(item => {
+        const match = item.text.match(/^Print Location (\d+) - Cost:$/);
+        if (match && item.additionalItems && Array.isArray(item.additionalItems)) {
+            const locationNum = match[1];
+            const register = `printSide${locationNum}Colors`;
+            item.additionalItems.forEach(ai => {
+                selected.push({ register, item: ai });
+            });
+        }
+    });
+    return selected;
+}
 
     const handleDropdownChange = (value, inputName) => {
         // const newData = [...printLocations];
@@ -368,8 +424,9 @@ function ShirtPricingComponent() {
         // //cheeck if i can just usse ...printlocations instead of newdata
         // setPrintLocations(newDataHere);
 
-        const newData = upsert(printLocations, inputName, value);
-        setPrintLocations(newData);
+         const newData = upsert(printLocations, inputName, value);
+       
+    setPrintLocations(newData);
     }
 
     const handleJerseySidesDropdownChange = (value) => {
@@ -389,6 +446,24 @@ function ShirtPricingComponent() {
         }
         setDisplayScreenChargeResults(!displayScreenChargeResults);
     }
+
+    const handleDuplicate = (tab) => {
+        const tabKey = TAB_KEYS[tab];
+        const saved = loadInputsForTab(tabKey);
+        
+        if (saved) {
+            setQuantity(saved.quantity || '');
+            setPrintLocations(saved.printLocations || defaultPrintLocations);
+            setJerseyNumberSides(saved.jerseyNumberSides || 0);
+            setShirtCost(saved.shirtCost || '');
+            setMarkUp(saved.markUp || '');
+            setScreenCharge(saved.screenCharge || screenChargeDefault || '');
+            setAdditionalItems(saved.additionalItems || []);
+            setDisplayScreenCharge(saved.displayScreenCharge || false);
+        } else {
+            alert('No previous values found for this tab.');
+        }
+    };
 
     const addPrintLocation = (printLocation) => {
         const newPrintLocations = [...printLocations, printLocation];
@@ -436,7 +511,27 @@ function ShirtPricingComponent() {
     }
 
     return (
+       <>
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+      <AwesomeButtonComponent
+        text="Duplicate Last Inputs"
+        type="primary"
+        size="medium"
+        onPress={() => handleDuplicate('screen_light')}
+      />
+      <div style={{ marginLeft: 16 }}>
+        <label>
+          <input
+            type="checkbox"
+            checked={autoFillEnabled}
+            onChange={() => setAutoFillEnabled(!autoFillEnabled)}
+          />
+          {' '}Auto-fill with last used values?
+        </label>
+      </div>
+    </div>     
         <Row>
+            
             <Column flex={.5}>
                 <Row>
                     <Column flex={0.05}>
@@ -573,6 +668,7 @@ function ShirtPricingComponent() {
                 }
             </Column>
         </Row >
+        </>
     );
 }
 
