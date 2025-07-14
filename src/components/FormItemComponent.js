@@ -31,9 +31,10 @@ function FormItemComponent(props) {
                     {!props.dropdown ?
                         <Column  >
                             <input
-                                style={{ width: '100px' }}
-                                 name={props.register}
-                             value={props.value}
+                                style={{ width: '100px',border: '1px solid #ccc' }}
+                                name={props.register}
+                                defaultValue={props.defaultValue}
+                                value={props.value}
                                 onChange={e => {
                                     console.log('Input value for', props.register, ':', e.target.value);
                                     props.handleChange(props.register, e.target.value, props.type);

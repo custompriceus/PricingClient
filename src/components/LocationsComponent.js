@@ -10,37 +10,37 @@ function LocationsComponent(props) {
     const [locations, setLocations] = useState();
     const [materialItems, setMaterialItems] = useState([]);
     useEffect(() => {
-  let isMounted = true; // ✅ Track if the component is still mounted
+        let isMounted = true; // ✅ Track if the component is still mounted
 
-  setLocations(props.defaultLocations);
+        setLocations(props.defaultLocations);
 
-  const fetchMaterialItems = async () => {
-    try {
-      const response = await apiServices.getMaterialData();
-      if (
-        isMounted &&                                // ✅ Only update state if still mounted
-        response && 
-        response.data && 
-        Array.isArray(response.data.alldata)
-      ) {
-        const dynamicItems = response.data.alldata.map(item => ({
-          name: item.key,
-        }));
-        setMaterialItems(dynamicItems);             // ✅ Safe state update
-      }
-    } catch (error) {
-      if (isMounted) {
-        console.error("Failed to load material items", error);
-      }
-    }
-  };
+        const fetchMaterialItems = async () => {
+            try {
+                const response = await apiServices.getMaterialData();
+                if (
+                    isMounted &&                                // ✅ Only update state if still mounted
+                    response &&
+                    response.data &&
+                    Array.isArray(response.data.alldata)
+                ) {
+                    const dynamicItems = response.data.alldata.map(item => ({
+                        name: item.key,
+                    }));
+                    setMaterialItems(dynamicItems);             // ✅ Safe state update
+                }
+            } catch (error) {
+                if (isMounted) {
+                    console.error("Failed to load material items", error);
+                }
+            }
+        };
 
-  fetchMaterialItems();
+        fetchMaterialItems();
 
-  return () => {
-    isMounted = false; // ✅ Cleanup on unmount
-  };
-}, []);
+        return () => {
+            isMounted = false; // ✅ Cleanup on unmount
+        };
+    }, []);
 
     const handleAdditionalItemsChange = (inputName, item) => {
         props.handleAdditionalItemsChange(inputName, item)
@@ -88,6 +88,9 @@ function LocationsComponent(props) {
         props.handleChange(event, inputName, props.locationsInputType);
     }
 
+    console.log("saved",props.dropdownOptions,"location.value",locations?.value, props.defaultLocations[0]?.value, "new de", props.newLocationDefaultValue);
+
+
     const renderLocations = () => {
         return (
             locations.map((location, index) => {
@@ -131,20 +134,21 @@ function LocationsComponent(props) {
                                     dropdownOptions={props.dropdownOptions ? props.dropdownOptions : null}
                                     handleDropdownChange={props.handleDropdownChange ? handleDropdownChange : null}
                                     handleChange={props.handleChange ? handleChange : null}
-                                    defaultDropdownValue={{ value: props.newLocationDefaultValue, label: props.newLocationDefaultValue }}
-                                     value={
+                                    // defaultValue={props.defaultLocations[0]?.value || props.newLocationDefaultValue}
+                                    defaultDropdownValue={{ value: props.defaultLocations[0]?.value || props.newLocationDefaultValue, label: props.defaultLocations[0]?.value || props.newLocationDefaultValue }}
+                                    value={
                                         props.dropdownOptions
-                                            ? props.dropdownOptions.find(opt => opt.value === Number(location.value))
+                                            ? props.dropdownOptions.find(opt => opt.value == Number(props.defaultLocations[0]?.value || props.newLocationDefaultValue))
                                             : undefined
                                     }
-                               />
+                                />
                                 {props.selectedAdditionalItems ? <AdditionalItemsComponent
-    handleChange={handleAdditionalItemsChange}
-    register={location.register}
-    displayText={'Additional Information - Mark if any of the following:'}
-    selectedAdditionalItems={props.selectedAdditionalItems}
-    allAdditionalItems={materialItems}
-/> : null}
+                                    handleChange={handleAdditionalItemsChange}
+                                    register={location.register}
+                                    displayText={'Additional Information - Mark if any of the following:'}
+                                    selectedAdditionalItems={props.selectedAdditionalItems}
+                                    allAdditionalItems={materialItems}
+                                /> : null}
 
                             </Column>
                         </Row>

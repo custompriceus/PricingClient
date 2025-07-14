@@ -450,6 +450,7 @@ function getSelectedAdditionalItemsFromResults(results) {
     const handleDuplicate = (tab) => {
         const tabKey = TAB_KEYS[tab];
         const saved = loadInputsForTab(tabKey);
+        console.log("saved", saved);
         
         if (saved) {
             setQuantity(saved.quantity || '');
@@ -564,7 +565,7 @@ function getSelectedAdditionalItemsFromResults(results) {
                     registerSuffix={'Colors'}
                     dropdown={true}
                     dropdownOptions={printLocationColorOptions}
-                    newLocationDefaultValue={1}
+                    newLocationDefaultValue={0}
                 />
                 <Row>
                     <Column flex={0.05}>
