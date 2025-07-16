@@ -62,9 +62,10 @@ function Routes() {
                     exact
                     path={"/"}
                     render={() => (
-                      <Layout>
+                      <CheckRoute element={<Layout>
                           <ShirtPricingComponent />
-                      </Layout>
+                      </Layout>}
+                      />
                     )}
                 />
                 {/* <Redirect to={SLUGS.shirtpricing} /> */}
