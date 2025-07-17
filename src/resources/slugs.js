@@ -4,5 +4,5 @@ default:'/login',
     login: '/login',
     shirtpricing: '/shirtpricing',
     embroiderypricing: '/embroiderypricing',
-    pricelist: '/pricelist'
+    pricelist: '/pricelist' 
 };
