@@ -106,7 +106,7 @@ const [screenDataError, setMaterialDataError] = useState(false);
             .then(res => {
                 console.log('new,', res.data)
                 setPrices(res.data)
-                setScreenCharge(res.data.screenCharge || ''); // <-- Add this line
+              //  setScreenCharge(res.data.screenCharge || ''); // <-- Add this line
                 actions.generalActions.resetisbusy();
             })
             .catch(err => {
