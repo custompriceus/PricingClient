@@ -5,4 +5,4 @@ default:'/login',
     shirtpricing: '/shirtpricing',
     embroiderypricing: '/embroiderypricing',
     pricelist: '/pricelist' 
-};
+}; 
