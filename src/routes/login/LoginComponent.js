@@ -76,6 +76,7 @@ function LoginComponent() {
                     localStorage.setItem("userDetails", JSON.stringify(res.data));
                     actions.generalActions.setUser(res.data);
                     actions.generalActions.login()
+                    window.location = "/";
                 })
                 .catch(err => handleError(err.response.data))
         }

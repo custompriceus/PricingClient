@@ -3,7 +3,6 @@ import { createUseStyles, useTheme } from 'react-jss';
 import { Column, Row } from 'simple-flexbox';
 import { SidebarComponent, SidebarContext } from 'components/sidebar';
 import HeaderComponent from 'components/header/HeaderComponent';
-import PrivateRoutes from './PrivateRoutes';
 
 const useStyles = createUseStyles({
     container: {
@@ -22,7 +21,7 @@ const useStyles = createUseStyles({
     }
 });
 
-function PrivateSection() {
+function Layout({children}) {
     const theme = useTheme();
     const classes = useStyles({ theme });
 
@@ -33,7 +32,7 @@ function PrivateSection() {
                 <Column flexGrow={1} className={classes.mainBlock}>
                     <HeaderComponent />
                     <div className={classes.contentBlock}>
-                        <PrivateRoutes />
+                       {children}
                     </div>
                 </Column>
             </Row>
@@ -41,4 +40,4 @@ function PrivateSection() {
     );
 }
 
-export default PrivateSection;
+export default Layout;

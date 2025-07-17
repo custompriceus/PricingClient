@@ -77,7 +77,7 @@ const [autoFillEnabled, setAutoFillEnabled] = useState(true);
         { value: 4, label: '4' },
         { value: 5, label: '5' },
         { value: 6, label: '6' },
-        ];
+    ];
     const [defaultPrintLocations, setDefaultPrintLocations] = useState([{
         text: "Print Location 1 - Amt of colors:",
         value: 1,
@@ -102,18 +102,18 @@ const [autoFillEnabled, setAutoFillEnabled] = useState(true);
     }]);
     const selectedPrintLocationOptions = printLocations.map(loc =>
         printLocationColorOptions.find(opt => opt.value === Number(loc.value))
-        );
+    );
     const jerseyNumberSidesOptions = [
-    { value: 0, label: '0' },
-    { value: 1, label: '1' },
-    { value: 2, label: '2' },
+        { value: 0, label: '0' },
+        { value: 1, label: '1' },
+        { value: 2, label: '2' },
     ];
     //get these deefault vaalues from backend
     const [additionalItems, setAdditionalItems] = useState([]);
     const [jerseyNumberSides, setJerseyNumberSides] = useState(0);
     const selectedJerseyNumberSides = jerseyNumberSidesOptions.find(
         opt => opt.value === Number(jerseyNumberSides)
-        );
+    );
     const [shirtCost, setShirtCost] = useState();
     const [shirtCostError, setShirtCostError] = useState();
     const [markUp, setMarkUp] = useState();
@@ -141,12 +141,12 @@ const [autoFillEnabled, setAutoFillEnabled] = useState(true);
             })
     }
     const fetchScreenCharge = async () => {
-            const response = await apiServices.getScreenCharge();
-            console.log(response);
-            if (response && response.data && response.data.screenCharge !== undefined) {
-                setScreenChargeDefault(response.data.screenCharge);
-            }
-        };
+        const response = await apiServices.getScreenCharge();
+        console.log(response);
+        if (response && response.data && response.data.screenCharge !== undefined) {
+            setScreenChargeDefault(response.data.screenCharge);
+        }
+    };
 
     useEffect(() => {
         fetchData().catch(console.error);
@@ -238,22 +238,22 @@ const [autoFillEnabled, setAutoFillEnabled] = useState(true);
     }
 
     const handleAdditionalItemsChange = (inputName, item) => {
-      console.log('handleAdditionalItemsChange called:', inputName, item);
-    const i = additionalItems.findIndex(_element => _element.register === inputName && _element.item === item);
-    const additionalItemsClone = [...additionalItems]
-    if (i > -1) {
-        additionalItemsClone.splice(i, 1);
-    }
-    else {
-        additionalItemsClone.push(
-            {
-                register: inputName,
-                item: item
-            }
-        )
-    }
-    setAdditionalItems(additionalItemsClone)
-     console.log('additionalItems after set:', additionalItemsClone);
+        console.log('handleAdditionalItemsChange called:', inputName, item);
+        const i = additionalItems.findIndex(_element => _element.register === inputName && _element.item === item);
+        const additionalItemsClone = [...additionalItems]
+        if (i > -1) {
+            additionalItemsClone.splice(i, 1);
+        }
+        else {
+            additionalItemsClone.push(
+                {
+                    register: inputName,
+                    item: item
+                }
+            )
+        }
+        setAdditionalItems(additionalItemsClone)
+        console.log('additionalItems after set:', additionalItemsClone);
     }
 
     const resetAll = () => {
@@ -373,7 +373,7 @@ const [autoFillEnabled, setAutoFillEnabled] = useState(true);
     setPrintLocations(allPrintLocations.length > 0 ? allPrintLocations : defaultPrintLocations);
     setAdditionalItems(getSelectedAdditionalItemsFromResults(results));    
                     }
-                  //  resetAll();
+                    //  resetAll();
                 })
                 .catch(err => {
                     console.log(err.response)
@@ -450,6 +450,7 @@ function getSelectedAdditionalItemsFromResults(results) {
     const handleDuplicate = (tab) => {
         const tabKey = TAB_KEYS[tab];
         const saved = loadInputsForTab(tabKey);
+        console.log("saved", saved);
         
         if (saved) {
             setQuantity(saved.quantity || '');
@@ -479,7 +480,7 @@ function getSelectedAdditionalItemsFromResults(results) {
 
     const renderPricingResults = () => {
         return (
-            <>
+            <><Row>
                 {canToggleScreenChargeResults ?
                     <Column style={{ margin: '10px' }}>
                         <ToggleFormItemComponent
@@ -493,6 +494,7 @@ function getSelectedAdditionalItemsFromResults(results) {
                         />
                     </Column>
                     : null}
+            </Row>
                 {shirtPricingResults.map(result => {
                     return (
                         <PricingResultsRowComponent
@@ -563,7 +565,7 @@ function getSelectedAdditionalItemsFromResults(results) {
                     registerSuffix={'Colors'}
                     dropdown={true}
                     dropdownOptions={printLocationColorOptions}
-                    newLocationDefaultValue={1}
+                    newLocationDefaultValue={0}
                 />
                 <Row>
                     <Column flex={0.05}>
@@ -582,7 +584,7 @@ function getSelectedAdditionalItemsFromResults(results) {
                             handleDropdownChange={handleJerseySidesDropdownChange}
                             defaultDropdownValue={jerseyNumberSidesOptions[0]}
                             value={selectedJerseyNumberSides}
-                            />
+                        />
                     </Column>
                 </Row>
                 <Row>
@@ -639,7 +641,7 @@ function getSelectedAdditionalItemsFromResults(results) {
                             text={'Include Screen Charge'}
                             defaultValue={screenChargeDefault}
                             displayInput={true}
-                             value={screenCharge} // <-- ADD THIS LINE
+                            value={screenCharge} // <-- ADD THIS LINE
                         />
                     </Column>
                 </Row>
