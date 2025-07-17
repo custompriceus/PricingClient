@@ -11,13 +11,11 @@ const renderAdditionalItems = (additionalItems, costDescription) => {
                     Expand For Detailed Pricing<FaArrowDown size='16px' />
                 </Row>
             }>
-                {additionalItems.map(item => {
-                    return (
-                        <Row style={{ margin: '10px', flex: 1, fontSize: '14px' }}>
-                            {item}
-                        </Row>
-                    )
-                })}
+                {additionalItems.map((item, index) => (
+                    <Row key={item} style={{ margin: '10px', flex: 1, fontSize: '14px' }}>
+                        {item}
+                    </Row>
+                    ))}
                 <Row style={{ margin: '10px', flex: 1, fontSize: '14px' }}>{costDescription}</Row>
             </Collapsible>
         </Column>

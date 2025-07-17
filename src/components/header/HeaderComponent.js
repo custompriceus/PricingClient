@@ -76,7 +76,7 @@ function HeaderComponent() {
     let title;
     switch (true) {
         case currentItem === SLUGS.shirtpricing:
-            title = 'Light/Dark Shirt Price Quote';
+            title = 'Screen Print Pricing Quote';
             break;
         case currentItem === SLUGS.embroiderypricing:
             title = 'Embroidery Price Quote';
@@ -86,7 +86,7 @@ function HeaderComponent() {
             break;
             
         default:
-            title = 'Light/Dark Shirt Price Quote';
+            title = 'Screen Print Pricing Quote';
     }
 
     function onSettingsClick() {

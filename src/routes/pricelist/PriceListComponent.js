@@ -66,11 +66,36 @@ function PriceListComponent() {
     const [screenCharge, setScreenCharge] = useState('');
 const [screenChargeSaved, setScreenChargeSaved] = useState(false);
 const [screenChargeError, setScreenChargeError] = useState(false);
-    
+const [field1, setField1] = useState('');
+const [field2, setField2] = useState('');
+const [field3, setField3] = useState('');
+const [field4, setField4] = useState('');   
+
+const [screenDataSaved, setMaterialDataSaved] = useState(false);
+const [screenDataError, setMaterialDataError] = useState(false);
+
     const fetchScreenCharge = async () => {
     const response = await apiServices.getScreenCharge();
     if (response && response.data && response.data.screenCharge !== undefined) {
+        console.log(response);
         setScreenCharge(response.data.screenCharge);
+    }
+};
+
+   const fetchMaterialData = async () => {
+    const response = await apiServices.getMaterialData();
+    if (response && response.data && Array.isArray(response.data.alldata)) {
+        const [first, second] = response.data.alldata;
+
+        if (first) {
+            setField1(first.key);
+            setField2(first.value);
+        }
+
+        if (second) {
+            setField3(second.key);
+            setField4(second.value);
+        }
     }
 };
 
@@ -91,8 +116,10 @@ const [screenChargeError, setScreenChargeError] = useState(false);
     }
 
     useEffect(() => {
-        fetchData().catch(console.error);
-        //   fetchScreenCharge();
+        fetchData().catch(console.error);      
+          fetchScreenCharge();
+          fetchMaterialData();
+
     }, []);
 
     const {
@@ -342,6 +369,71 @@ const [screenChargeError, setScreenChargeError] = useState(false);
     {screenChargeSaved && <span style={{ color: 'green', marginLeft: 10 }}>Saved!</span>}
     {screenChargeError && <span style={{ color: 'red', marginLeft: 10 }}>Error saving!</span>}
 </Row>
+
+         <Row vertical='center' horizontal='center'>
+            <h3 style={{ marginBottom: 10 }}>Material</h3>
+
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 300px)', // updated width
+                gap: '20px 25px',
+                marginBottom: 15
+            }}>
+                <input
+                    type="text"
+                    placeholder="First Material"
+                    value={field1}
+                    onChange={e => setField1(e.target.value)}
+                    style={{ padding: '6px' }}
+                />
+                <input
+                    type="number"
+                    placeholder="Amount of first material"
+                    value={field2}
+                    onChange={e => setField2(e.target.value)}
+                    style={{ padding: '6px' }}
+                />
+                <input
+                    type="text"
+                    placeholder="Second Material"
+                    value={field3}
+                    onChange={e => setField3(e.target.value)}
+                    style={{ padding: '6px' }}
+                />
+                <input
+                    type="number"
+                    placeholder="Amount of second material"
+                    value={field4}
+                    onChange={e => setField4(e.target.value)}
+                    style={{ padding: '6px' }}
+                />
+            </div>
+
+            <AwesomeButtonComponent
+                text="Save"
+                size="medium"
+                type="primary"
+                onPress={async () => {
+                        // Call your API to save the screen charge
+                        const response = await apiServices.saveMaterialData(field1,field2,field3,field4);
+                    //const response = '';
+                        if (response && response.data && response.data.success) {
+                            setMaterialDataSaved(true);
+                            setMaterialDataError(false);
+                            fetchMaterialData(); // <-- Add this line
+                        } else {
+                            setMaterialDataError(true);
+                        }
+                    }}
+            />
+            {screenDataSaved && (
+                <span style={{ color: 'green', marginLeft: 10 }}>Saved!</span>
+            )}
+            {screenDataError && (
+                <span style={{ color: 'red', marginLeft: 10 }}>Error saving!</span>
+            )}
+        </Row>
+
             </div >
         )
             : null
